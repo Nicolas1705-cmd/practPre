@@ -1,0 +1,198 @@
+       *{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: transparent;
+}
+.border0{
+  border: none !important;
+}
+.texttitulo{
+  display: inline-block;
+}
+.colheader{
+    width: 50%;
+    float: left;
+}
+.colheaderEc1{
+    width: 15%;
+    float: left;
+}
+
+.colheaderEc2{
+    width: 55%;
+    float: left;
+}
+.colheaderInfo{
+    width: 50%;
+    float: left;
+}
+.colheaderInfointegrant{
+    width: 100%;
+    float: left;
+}
+
+.text-tiutlo { text-align: right;}
+
+.colheaderEc3{
+    width: 30%;
+    float: left;
+}
+
+.table-detaill{
+  width: 100%;
+  margin-top: 5px;
+} 
+.table-OBSERB{
+  width: 100%;
+} 
+.table-XTRA{
+  width: 100%;
+margin: 0px!important;
+border-bottom: none!important;
+}
+.nSolicitud{
+color: red;
+text-align: right;
+}
+.caja-info{
+    padding: 5px;
+
+}
+header.clearfix {
+    width: 100%;
+}
+.cabezaheader{
+margin:0px;
+}
+.bill-info{
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+.tc{
+  width: 5px;border: 1px solid #dddddd;
+
+}
+.tdE{
+  width: 200px;
+}
+.tdO{
+  width: 280px;
+}
+.colfirma{
+
+    width: 26%;
+    float: left;
+border: 1px solid #dddddd;
+
+}
+.colfirma3{
+    width: 32%;
+    float: left;
+    height: 56px !important; 
+border: 1px solid #dddddd;
+}
+
+.tdob1{
+  width: 12%;
+}
+.colfoter-firma{
+    width: 26%;
+    float: left;
+border: 1px solid #dddddd;
+}
+.colfoter-firma4{
+    width: 24%;
+    float: left;
+border: 1px solid #dddddd;
+}
+.coldata{
+border: 1px solid #dddddd;
+    width: 41%;
+    float: left;    
+}
+.coldatatable{
+    width: 41%;
+    float: left;
+}
+
+.coldata2{
+    width: 32%;
+    float: left;
+border: 1px solid #dddddd;
+}
+.coldata3{
+    width: 41%;
+    float: left;
+border: 1px solid #dddddd;
+}
+
+.colfoter{
+  width: 50%;
+  float: left;
+}
+
+.colfoter2{
+  width: 23%;
+  float: left;
+}
+.colfoter3{
+  width: 25%;
+  float: left;
+}
+.pf3{
+  padding: 10px;
+}
+   
+.mgbotom{
+  margin-bottom: 0px;
+}   
+.mgleft{
+  margin-left: 3px;
+}  
+.mgtop{
+  margin-top: 3px
+} 
+.bb {
+    border-bottom:  1px solid #dddddd;
+}
+td#rc {
+    width: 45%;
+}
+.firmaOp{
+  width: 100%; border:1px solid #dddddd;
+}
+
+.mr{
+  margin-right: 100px!important;
+}
+.text-color{
+visibility:hidden;
+}
+.ch{
+  width: 100%;
+}
+.ctt7{
+  width: 26%; float: left; margin-left: 2px;
+}
+.ctt{
+  width: 24%; float: left; margin-left: 2px;
+}
+
+.ctt1{
+  width: 25%; float: left;
+}
+.ctt2{
+  width: 45%; float: left; margin-left: 2px;
+}
+.ctt2-1{
+  width: 45%; float: left;
+}
+.txt-font {
+    font-size: 10px;
+}
+.bgazul{
+  background-color: rgb(52, 152, 219)!important;
+  color: white;
+}

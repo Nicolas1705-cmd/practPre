@@ -1,0 +1,539 @@
+.f-p1{
+  font-size: 11px!important;
+}
+.f-p2{
+  font-size: 10px!important;
+}
+.f-p3{
+  font-size: 12px!important;
+}
+ 	.colheadermfT{
+  width: 80%;
+    float: left;
+}
+.p-2{
+	padding: 8px;
+	      border:1px solid #dddddd;
+}
+.pm-2{
+	padding: 3px;
+}
+.colheaderMf2 {
+    float: left;
+}
+.colheadermfS{
+	width: 20%;
+	float: left;
+
+}
+.border{
+	 	      border:1px solid #dddddd;
+
+}
+.m-p{
+  margin:none;
+    line-height:1;
+    padding: 1;
+}
+
+.mt-xs{
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+.colheaderOD{
+	width: 30%;
+	float: right;
+
+
+}
+.coldataMf{
+	width: 100%;
+	float: left;
+}
+.subMf {
+    width: 100%;
+    float: left;
+}
+.subMf2{
+	width: 50%;
+	float: left;
+}
+.subMf3 {
+    float: left;
+    width: 30%;
+}
+.subMf4{
+	width: 50%;
+	float: left;
+}
+.subMf5{
+    float: left;
+    width: 20%;	
+}
+.subMf7{
+    float: left;
+    width: 30%; 
+}
+.subMf8{
+    float: left;
+    width: 30%; 
+}
+.subMf6{
+	float: left;
+	width: 40%;
+}
+.colfoterMF{
+  float: left;
+  width: 100%;
+  margin: 0px;
+}
+.subfooter{
+    float: left;
+    width: 50%;
+    margin-right: 10px;
+}
+.nodofoter{
+  float: left;
+  width: 50%;
+  margin: 0px;
+}
+.nodofoter2{
+  float: left;
+  width: 100%;
+}
+.bor-1{
+  border: 1px solid #dddddd; 
+  padding: 6px;
+}
+.nodofoterfirma {
+  width: 45%;
+  float: left;
+  border: 1px solid #dddddd;
+  margin-left: 5px;
+}
+.nodofoterfirma2 {
+  width: 52%;
+  float: left;
+  border-top: 1px solid #dddddd;
+  border-right: 1px solid #dddddd;
+  border-bottom: 1px solid #dddddd;
+}
+.tchr{
+  width: 10px;
+  border:1px solid #dddddd;     
+}
+	
+.mgtop{
+      margin-top: 11px;
+}
+
+       *{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: transparent;
+
+}
+.border0{
+  border: none !important;
+}
+.texttitulo{
+  display: inline-block;
+}
+.colheader{
+    width: 50%;
+    float: left;
+
+}
+.colheaderEc1{
+    width: 80%;
+    float: left;
+
+}
+
+.colheaderEc2{
+    width: 55%;
+    float: left;
+
+}
+.text-tiutlo { text-align: right;}
+
+.colheaderEc3{
+
+    width: 30%;
+    float: left;
+}
+
+.table-detaill{
+  width: 100%;
+  margin-top: 5px;
+} 
+.table-OBSERB2{
+  width: 100%;
+    margin-top: 1px;
+    margin-bottom: 1px;
+
+} 
+.table-OBSERB{
+  width: 100%;
+} 
+.table-XTRA{
+  width: 100%;
+margin: 0px!important;
+border-bottom: none!important;
+}
+.nSolicitud{
+color: red;
+text-align: right;
+}
+.caja-info{
+    padding: 5px;
+
+}
+header.clearfix {
+    width: 100%;
+}
+.cabezaheader{
+margin:0px;
+}
+.bill-info{
+  margin: 0;
+  padding: 0;
+  width: 100%;
+
+}
+.tc{
+  width: 5px;border: 1px solid #dddddd;
+
+}
+.tdE{
+  width: 200px;
+}
+.tdO{
+  width: 280px;
+}
+.colfirma{
+
+    width: 26%;
+    float: left;
+border: 1px solid #dddddd;
+
+}
+.colfirma3{
+
+    width: 32%;
+    float: left;
+    height: 56px !important; 
+border: 1px solid #dddddd;
+
+}
+
+.tdob1{
+  width: 12%;
+}
+.tdob3{
+  width: 30%;
+}
+.colfoter-firma{
+
+    width: 26%;
+    float: left;
+border: 1px solid #dddddd;
+
+}
+.colfoter-firma4{
+
+    width: 24%;
+    float: left;
+border: 1px solid #dddddd;
+
+}
+.coldata{
+border: 1px solid #dddddd;
+    width: 41%;
+    float: left;
+    
+}
+.coldatatable{
+
+    width: 41%;
+    float: left;
+    
+}
+.coldata2{
+
+    width: 32%;
+    float: left;
+border: 1px solid #dddddd;
+}
+
+.mp2{
+  margin: 2px;
+  padding: 2px;
+}
+
+.lh{
+      line-height:1.2;
+ margin: 2px;
+}
+.m-0{
+  margin: none;
+  padding: none;
+  float: left;
+}
+
+.coldata3{
+
+    width: 41%;
+    float: left;
+border: 1px solid #dddddd;
+}
+
+.colfoter{
+
+  width: 50%;
+  float: left;
+}
+.colfoter2{
+
+  width: 23%;
+  float: left;
+}
+.colfoter3{
+
+  width: 25%;
+  float: left;
+}
+.pf3{
+  padding: 10px;
+}
+   
+.mgbotom{
+  margin-bottom: 0px;
+}   
+.mgleft{
+  margin-left: 3px;
+}  
+.mgtop{
+  margin-top: 3px
+} 
+.bb {
+
+    border-bottom:  1px solid #dddddd;
+}
+td#rc {
+    width: 45%;
+}
+.firmaOp{
+  width: 100%; border:1px solid #dddddd;
+}
+
+.mr{
+  margin-right: 100px!important;
+}
+.text-color{
+visibility:hidden;
+}
+
+
+  .forma{
+  float: left;
+  margin-right: 8%;
+      font-size: 10px;
+    text-align: center;
+
+}
+
+
+#cuadrado {
+   width: 18px;
+   height: 15px;
+  border: 1px solid;
+}
+.i-block{
+  display: inline-block;
+  float: left;
+}
+.ctfull{
+  width: 100%;
+}
+.panelpers{
+float: right; padding: 4px;border: 1px solid; border-radius: 7px;
+width: 32%;
+}
+.i-block-plus{ 
+  float: left;
+  width: 65%;
+ 
+}
+.flleft{
+float:left; 
+
+}
+.ct-mitad{
+  float: left;
+  width: 50%;
+}
+#itemr-1{
+  width: 90px;
+  float: left;
+  font-size: 10px;
+}
+#itemr-2{
+  width:90px;
+  float: left;
+  margin-left: 20px;
+    font-size: 10px;
+}
+#itemr-3{
+  width:90px;
+  float: left;
+    margin-left: 20px;
+
+   font-size: 10px;
+}
+
+#itemr-4{
+  width: 280px;
+  float: left;
+      margin-left: 20px;
+   font-size: 10px;
+}
+#itemr-5{
+  width: 265px;
+  float: left;
+   font-size: 10px;
+}
+#itemr-6{
+  width: 65px;
+  float: left;
+       margin-left: 20px;
+
+   font-size: 10px;
+}
+#itemr-7{
+  width: 90px;
+  float: left;
+         margin-left: 20px;
+
+   font-size: 10px;
+}
+#itemr-8{
+  width: 56px;
+  float: left;
+   font-size: 10px;
+            margin-left: 5px;
+
+}
+#itemr-9{
+  width: 50px;
+  float: left;
+   font-size: 10px;
+               margin-left: 5px;
+
+}
+
+.ip-c1{
+  float: left;
+  width: 80px;
+  height: 80px;
+}
+.i-block-50{ 
+  float: left;
+  width: 50%;
+ 
+}
+.table-detaill{
+  width: 100%;
+  margin-top: 5px;
+} 
+
+.bpers1{
+ display: inline-block;
+border:1px solid;
+float: left;
+  padding: 5px;
+  border-radius: 12px;
+}
+.ifleft{
+width: 60px;
+    float: left;
+
+}
+.ifleft2{
+    float: left;
+
+}
+.ct-FECHA1{
+  float: left;
+  width: 35%;
+}
+.ifleft3{
+width: 115px;
+    float: left;
+
+}
+.ct-maxmitad{
+  float: left;
+  width: 55%;
+  margin-left: 5px;
+}
+.headecard{
+  background: #1A5276;
+
+}
+.bpersct{
+  border:1px solid;
+  border-radius: 5px;
+}
+.ct-personalizadomitad{
+  float: left;
+  width: 48%;
+}
+.mleftpes{
+  margin-left: 2%;
+}
+.text-pers{
+      color: white;
+}
+.bgtablepes{
+      color: white;
+
+}
+.ct-personalizadotriple{
+  float: left;
+  width: 32%;
+}
+.ct-personalizadotriplea1{
+  float: left;
+  width: 34%;
+  margin-right: 3px;
+}
+
+
+#itemTR-1{
+  width: 40px;
+  float: left;
+}
+#itemTR-2{
+  width:60px;
+  float: left;
+  margin-left: 20px;
+}
+#itemTR-3{
+  width:60px;
+  float: left;
+    margin-left: 20px;
+
+}
+.ilft{
+  float: left;
+    width: 80px;
+
+}
+#itemTR-4{
+  width: 80px;
+  float: left;
+      margin-left: 20px;
+   font-size: 10px;
+}

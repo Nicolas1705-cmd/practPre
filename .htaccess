@@ -1,0 +1,18 @@
+Options All -Indexes
+
+RewriteEngine On
+
+# Modifica la regla de reescritura para permitir parámetros GET
+RewriteCond %{QUERY_STRING} !views=
+RewriteRule ^([a-zA-Z0-9/]+)$ index.php?views=$1 [QSA,L]
+
+# Redirección a HTTPS si no está usando
+RewriteCond %{HTTP_HOST} ^localhost/appWce2/ [NC]
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+<FilesMatch "\.(?i:gif|jpe?g|png|ico|css|js|swf)$">
+  <IfModule mod_headers.c>
+    Header set Cache-Control "max-age=172800, public, must-revalidate"
+  </IfModule>
+</FilesMatch>
