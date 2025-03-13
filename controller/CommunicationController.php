@@ -32,8 +32,6 @@ return $cuerpo;
 }
 
 
-
-
     public function updateCommunicationController(){
 
     $idCommunication= mainModel::limpiar_cadena($_POST['idCommunication']);

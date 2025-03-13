@@ -1,216 +1,355 @@
 <?php 
 if ($peticionAjax) {
-  require_once "../model/VehicleModel.php";
-}else{
-  require_once "./model/VehicleModel.php";
+    require_once "../model/VehicleModel.php";
+} else {
+    require_once "./model/VehicleModel.php";
 }
 
-class VehicleController extends VehicleModel{
+class VehicleController extends VehicleModel {
+    public function listVehicleController($request, $status) {
+        $cnn = mainModel::conect();
+        $btn = ($status == 1) ? "danger" : "success";
+        $icon = ($status == 1) ? "trash fa-lg" : "check fa-lg";
+
+        $col = array(0 => 'idVehicle', 1 => 'nserie', 2 => 'plate', 3 => 'nVin', 4 => 'nEngine', 5 => 'color', 6 => 'currentPlate', 7 => 'previousPlate', 8 => 'annotations', 9 => 'owner', 10 => 'estado', 11 => 'modelYear', 12 => 'idDepa', 13 => 'idVehicleBrand', 14 => 'idVehicleModel', 15 => 'dateRegister');
+        $index = ($request['order'][0]['column'] != 5) ? $request['order'][0]['column'] : 0;
+
+        $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM tvehicle WHERE status = :status";
+        $query = $cnn->prepare($sql);
+        $query->bindParam(':status', $status);
+        $query->execute();
+
+        if (!empty($request['search']['value'])) {
+            $sql .= " AND nserie LIKE :search";
+            $query = $cnn->prepare($sql);
+            $searchValue = "%" . $request['search']['value'] . "%";
+            $query->bindParam(':search', $searchValue);
+            $query->bindParam(':status', $status);
+            $query->execute();
+        }
+
+        $totalData = $cnn->query("SELECT FOUND_ROWS()")->fetchColumn();
+        if (isset($request['order'])) {
+            $sql .= " ORDER BY " . $col[$index] . " " . $request['order'][0]['dir'] . " LIMIT :start, :length";
+            $query = $cnn->prepare($sql);
+            $query->bindParam(':start', $request['start'], PDO::PARAM_INT);
+            $query->bindParam(':length', $request['length'], PDO::PARAM_INT);
+            $query->bindParam(':status', $status);
+            $query->execute();
+        }
+
+        $data = array();
+        $contador = 0;
+        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+            $subdata = array();
+            $contador++;
+            $encryp = mainModel::encryption($row['idVehicle']);
+            $row['idVehicle'] = $encryp;
+
+            $subdata[] = $contador;
+            $subdata[] = $row['nserie'];
+            $subdata[] = $row['plate'];
+            $subdata[] = $row['nVin'];
+            $subdata[] = $row['nEngine'];
+            $subdata[] = $row['color'];
+            $subdata[] = $row['currentPlate'];
+            $subdata[] = $row['previousPlate'];
+            $subdata[] = $row['annotations'];
+            $subdata[] = $row['owner'];
+            $subdata[] = $row['estado'];
+            $subdata[] = $row['modelYear'];
+            $subdata[] = $row['idDepa'];
+            $subdata[] = $row['idVehicleBrand'];
+            $subdata[] = $row['idVehicleModel'];
+            $subdata[] = $row['dateRegister'];
+
+            $operacionescrud = "<a onclick='rellEditV2(`" . $encryp . "`,`vehicleAjax`,`" . SERVERURL . "`,`idVehicle`)' class='btn btn-primary btn-xs  mr-xs' data-toggle='modal' data-target='#modalesForm'><i class='fa-regular fa-pen-to-square'></i></a>";
+            $operacionescrud .= "<button type='submit' onclick='modalOnActivaDeleteDataTable(`vehicleAjax`,`" . $encryp . "`,`" . $status . "`,`" . SERVERURL . "`)' class='btn btn-" . $btn . " btn-xs '> <i class='fa fa-" . $icon . "'></i></button>";
+
+            $subdata[] = $operacionescrud;
+            $data[] = $subdata;
+        }
 
 
-    //ESTA FUNCION ES LA DE LISTAR EN LA VISTA DE TODOS LOS VehicleES
-  public function listVehicleController($request,$status){
-      
-//ESTA FUNCION ME PERMITE CONECTARME A LA BASE DE DATOS A TRAVEZ DEL ARCHIVO MAINMODEL CON LA FUNCION CONNECT
-      $cnn = mainModel::conect();
-   $btn="";
-      $icon="";
-      if($status==1){
-        $btn="danger";
-        $icon="trash fa-lg";
-      }else{      
-        $btn="success";
-        $icon="check  fa-lg";
-      }
-
-      //AQUI ALMACENO LOS ATRIBUTOS DE MI TABLA DE MI BASE DE DATOS QUE QUIERO QUE SE MUESTREN EN LA VISTA
-$col =array(
-    0 =>'idVehicle',
-    1 =>'brand',
-    2=>'nserie',
-    3=>'dateRegister'
-);  
-$index=0;
-if ($request['order'][0]['column']!=5) {
-$index=$request['order'][0]['column'];
-}
-if ($request['order'][0]['column']==5) {
-$index=0;
-}
-//AQUI VA LA CONSULTA SELECT A LA BASE DE DATOS
-$sql ="SELECT SQL_CALC_FOUND_ROWS * FROM tvehicle WHERE status=$status";
-$query= $cnn->query($sql);
- $totalData = $cnn->query("SELECT FOUND_ROWS()");
- $totalData = (int) $totalData->fetchColumn();
-
- //ESTO SIRVE PARA BUSCAR EN MI TABLA VISIBLE
-if(!empty($request['search']['value'])){
-    $sql.=" AND name Like '".$request['search']['value']."%' ";
-}
-$query= $cnn->query($sql);
-      $totalData = $cnn->query("SELECT FOUND_ROWS()");
-            $totalData = (int) $totalData->fetchColumn();
-if(isset ($request['order'])){
-$sql.=" ORDER BY   ".$col[$index]."   ".$request['order'][0]['dir']."   LIMIT ".
-    $request['start']."  ,".$request['length']."  ";
-}
-
-//AQUI EJECUTA LA CONSULTA A LA BASE DE DATOS
-$query= $cnn->query($sql);
-$totalFilter=$totalData;
-$data=array();
-$contador=0;
-//AQUI ME ESTA RECORRIENDO LOS DATOS OBTENIDOS EN LA CONSULTA SELEC A LA BASE DE DATOS
-while($row = $query->fetch(PDO::FETCH_ASSOC)){
-    
-    //var_dump($row);
-    $subdata=array();
-    $contador = $contador+1;
-    $encryp=mainModel::encryption($row['idVehicle']);
-    $row['idVehicle']=$encryp;
-//AQUI DEBEN IR EN ORDEN LOS ATRIBUTOS A MOSTRAR EN LA VISTA
-    $subdata[]=$contador;
-    $subdata[]=$row['brand']; 
-    $subdata[]=$row['nserie']; 
-    $subdata[]=$row['dateRegister']; 
-    $operacionescrud="";
-     
-        $operacionescrud.=" <a onclick='rellEditProvider2(".json_encode($row).",`".'VehicleAjax'."`,`".SERVERURL."`)' class='btn btn-primary btn-xs  mr-xs'  data-toggle='modal' data-target='#modalesForm' ><i class='fa-regular fa-pen-to-square'></i> </a>";
-
-  $operacionescrud.="<button type='submit' onclick='modalOnActivaDeleteDataTable(`".'VehicleAjax'."`,`".$encryp."`,".$status.",`".SERVERURL."`)' class='btn btn-".$btn." btn-xs '> <i class='fa fa-".$icon."'></i></button> ";
-      
-    $subdata[]=$operacionescrud;     
-    $data[]=$subdata;
-}
-$json_data=array(
-    "draw" => isset ( $request['draw'] ) ?  intval( $request['draw'] ) : 0, 
-   "recordsTotal"      =>  intval($totalData),
-   "recordsFiltered"   =>  intval($totalFilter),
-   "data"              =>  $data
-);
-return json_encode($json_data);
-   }
-//AQUI TERMINA LA FUNCION LISTADO
-
-//ESTA FUNCION SE ENCARGA DE HABILITAR Y DESHABILITAR REGISTROS
-    public function activaDeleteBrandController($idElemento ,$status){
-      $idElemento = mainModel::limpiar_cadena($idElemento);
-      $idElemento=mainModel::decryption($idElemento);
- if($idElemento!=false){
- 
-      $status=mainModel::limpiar_cadena($status);
-
-//AQUI PONDREMOS EL PRIMER PARAMETRO SERA EL NOMBRE EXACTO DE TU TABLA EN LA BASE DE DATOS Y EL ULTIMO PARAMETRO SERA EL ID DE LA MISMA TABLA
-      if(mainModel::activateDeleteSimple("tVehicle",$idElemento,$status,"idVehicle")){
-        if($status==1){
-        $msg=["alert"=>"delete"]; 
-      }else{
-        $msg=["alert"=>"activate"];
-      }
-        }else{
-          $msg=["alert"=>"error"];
-        } 
-           }else{
-                      $msg=["alert"=>"error"];
-
-           }
-      return mainModel::mensajeRespuesta($msg);
+        $json_data = array(
+            "draw" => isset($request['draw']) ? intval($request['draw']) : 0,
+            "recordsTotal" => intval($totalData),
+            "recordsFiltered" => intval($totalData),
+            "data" => $data
+        );
+        return json_encode($json_data);
     }
-//FINAL DE LA FUNCION DE HABILITAR Y DESHABILITAR REGISTROS
- 
-public function fomUpdate(){
-    
-}
 
-public function paintForm($saveUpdate){
-    $titulo="";
-    $subtitulo="";
-    if ($saveUpdate=="save") {
-    $titulo="Registro de nserie";
-    $subtitulo='    <p class="panel-subtitle">
-                  Por favor , llene  todos los campos y de click en guardar
-                  </p>';
-}
-if ($saveUpdate=="update") {
-$titulo="Editor de nserie";
-$subtitulo='';
-}
-$html='
-<section class="panel">
+    public function activaDeleteBrandController($idElemento, $status) {
+        $idElemento = mainModel::limpiar_cadena($idElemento);
+        $idElemento = mainModel::decryption($idElemento);
+        if ($idElemento != false) {
+            $status = mainModel::limpiar_cadena($status);
+            if (mainModel::activateDeleteSimple("tvehicle", $idElemento, $status, "idVehicle")) {
+                if ($status == 1) {
+                    $msg = ["alert" => "delete"];
+                } else {
+                    $msg = ["alert" => "activate"];
+                }
+            } else {
+                $msg = ["alert" => "error"];
+            }
+        } else {
+            $msg = ["alert" => "error"];
+        }
+        return mainModel::mensajeRespuesta($msg);
+    }
+
+    public function fomUpdate() {
+        $idVehicle = mainModel::limpiar_cadena($_GET['idVehicle']);
+        $idVehicle = mainModel::decryption($idVehicle);
+
+        $consulta = mainModel::execute_query("SELECT * FROM tvehicle WHERE idVehicle = $idVehicle");
+        $req = $consulta->fetch(PDO::FETCH_ASSOC);
+        $cuerpo = ' <script> 
+$(".nserie").val("' . $req['nserie'] . '");
+$(".plate").val("' . $req['plate'] . '");
+$(".nVin").val("' . $req['nVin'] . '");
+$(".nEngine").val("' . $req['nEngine'] . '");
+$(".color").val("' . $req['color'] . '");
+$(".currentPlate").val("' . $req['currentPlate'] . '");
+$(".previousPlate").val("' . $req['previousPlate'] . '");
+$(".annotations").val("' . $req['annotations'] . '");
+$(".owner").val("' . $req['owner'] . '");
+$(".estado").val("' . $req['estado'] . '");
+$(".modelYear").val("' . $req['modelYear'] . '");
+$(".idDepa").val("' . $req['idDepa'] . '");
+$(".idVehicleBrand").val("' . $req['idVehicleBrand'] . '");
+$(".idVehicleModel").val("' . $req['idVehicleModel'] . '");
+</script>';
+        return $cuerpo;
+    }
+
+    public function updateVehicleController() {
+        $idVehicle = mainModel::limpiar_cadena($_POST['idVehicle']);
+        $idVehicle = mainModel::decryption($idVehicle);
+        $nserie = mainModel::limpiar_cadena($_POST['nserie']);
+        $plate = mainModel::limpiar_cadena($_POST['plate']);
+        $nVin = mainModel::decryption($nVin);
+        $nEngine = mainModel::limpiar_cadena($_POST['nEngine']);
+        $color = mainModel::limpiar_cadena($_POST['color']);
+        $currentPlate = mainModel::limpiar_cadena($_POST['currentPlate']);
+        $previousPlate = mainModel::limpiar_cadena($_POST['previousPlate']);
+        $annotations = mainModel::limpiar_cadena($_POST['annotations']);
+        $owner = mainModel::decryption($owner);
+        $estado = mainModel::limpiar_cadena($_POST['estado']);
+        $modelYear = mainModel::limpiar_cadena($_POST['modelYear']);
+        $idDepa = mainModel::limpiar_cadena($_POST['idDepa']);
+        $idVehicleBrand = mainModel::limpiar_cadena($_POST['idVehicleBrand']);
+        $idVehicleModel = mainModel::limpiar_cadena($_POST['idVehicleModel']);
+
+        $data = [
+            "idVehicle" => $idVehicle,
+            "nserie" => $nserie,
+            "plate" => $plate,
+            "nVin" => $nVin,
+            "nEngine" => $nEngine,
+            "color" => $color,
+            "currentPlate" => $currentPlate,
+            "previousPlate" => $previousPlate,
+            "annotations" => $annotations,
+            "owner" => $owner,
+            "estado" => $estado,
+            "modelYear" => $modelYear,
+            "idDepa" => $idDepa,
+            "idVehicleBrand" => $idVehicleBrand,
+            "idVehicleModel" => $idVehicleModel
+        ];
+
+        if (VehicleModel::updateVehicleModel($data)) {
+            $msg = ["alert" => "save"];
+        } else {
+            $msg = ["alert" => "error"];
+        }
+        return mainModel::mensajeRespuesta($msg);
+    }
+
+    public function paintForm($saveUpdate) {
+        $titulo = ($saveUpdate == "save") ? "Registro de Vehìculos" : "Editor de nserie";
+        $subtitulo = ($saveUpdate == "save") ? '<p class="panel-subtitle">Por favor , llene  todos los campos y de click en guardar</p>' : '';
+
+        $html = '<section class="panel">
                 <header class="panel-heading">
-                  <h2 class="panel-title">'.$titulo.'</h2>';
-$html.=$subtitulo;  
-               $html.='</header>
+                  <h2 class="panel-title">' . $titulo . '</h2>' . $subtitulo . '</header>
                 <div class="panel-body ">
-                <div class="caja'.$saveUpdate.'"> 
-
-                </div>
+                <div class="caja' . $saveUpdate . '"> </div>
                   <div class="row mb-xs">
-
-
           <div class="col-sm-3 mb-xs">
                       <div class="form-group">
-                      <input type="hidden"  name="'.$saveUpdate.'" >
+                      <input type="hidden"  name="' . $saveUpdate . '" >
                       <input type="hidden" class="idVehicle"  name="idVehicle" >
-                           <label class="control-label">VEHÍCULO <span class="required">*</span> </label>
-                        <input type="text" name="idVehicle" class="form-control name"    required title="Este campo es obligatorio" >
+                           <label class="control-label">N° SERIE<span class="required">*</span> </label>
+                          <input type="text" name="nserie" class="form-control nserie"  maxlength="100"  required title="Este campo es obligatorio" >
                       </div>
                     </div>
-
+          <div class="col-sm-3 mb-xs">
+                      <div class="form-group">
+                      <input type="hidden"  name="' . $saveUpdate . '" >
+                      <input type="hidden" class="idVehicle"  name="idVehicle" >
+                           <label class="control-label">N° PLACA<span class="required">*</span> </label>
+                          <input type="text" name="plate" class="form-control plate"  maxlength="15"  required title="Este campo es obligatorio" >
+                      </div>
+                    </div>
+          <div class="col-sm-3 mb-xs">
+                      <div class="form-group">
+                      <input type="hidden"  name="' . $saveUpdate . '" >
+                      <input type="hidden" class="idVehicle"  name="idVehicle" >
+                           <label class="control-label">N° VIN<span class="required">*</span> </label>
+                          <input type="text" name="nVin" class="form-control nVin"  maxlength="100"  required title="Este campo es obligatorio" >
+                      </div>
+                    </div> 
+          <div class="col-sm-3 mb-xs">
+                      <div class="form-group">
+                      <input type="hidden"  name="' . $saveUpdate . '" >
+                      <input type="hidden" class="idVehicle"  name="idVehicle" >
+                           <label class="control-label">N° MOTOR<span class="required">*</span> </label>
+                          <input type="text" name="nEngine" class="form-control nEngine"  maxlength="100"  required title="Este campo es obligatorio" >
+                      </div>
+                    </div>
+          <div class="col-sm-3 mb-xs">
+                      <div class="form-group">
+                      <input type="hidden"  name="' . $saveUpdate . '" >
+                      <input type="hidden" class="idVehicle"  name="idVehicle" >
+                           <label class="control-label">COLOR<span class="required">*</span> </label>
+                          <input type="text" name="color" class="form-control color"  maxlength="100"  required title="Este campo es obligatorio" >
+                      </div>
+                    </div>
+          <div class="col-sm-3 mb-xs">
+                      <div class="form-group">
+                      <input type="hidden"  name="' . $saveUpdate . '" >
+                      <input type="hidden" class="idVehicle"  name="idVehicle" >
+                           <label class="control-label">PLACA VIGENTE<span class="required">*</span> </label>
+                          <input type="text" name="currentPlate" class="form-control currentPlate"  maxlength="15"  required title="Este campo es obligatorio" >
+                      </div>
+                    </div>
+          <div class="col-sm-3 mb-xs">
+                      <div class="form-group">
+                      <input type="hidden"  name="' . $saveUpdate . '" >
+                      <input type="hidden" class="idVehicle"  name="idVehicle" >
+                           <label class="control-label">PLACA ANTERIOR<span class="required">*</span> </label>
+                          <input type="text" name="previousPlate" class="form-control previousPlate"  maxlength="15"  required title="Este campo es obligatorio" >
+                      </div>
+                    </div>
+          <div class="col-sm-3 mb-xs">
+                      <div class="form-group">
+                      <input type="hidden"  name="' . $saveUpdate . '" >
+                      <input type="hidden" class="idVehicle"  name="idVehicle" >
+                           <label class="control-label">ANOTACIONES<span class="required">*</span> </label>
+                          <input type="text" name="annotations" class="form-control annotations"  maxlength="255"  required title="Este campo es obligatorio" >
+                      </div>
+                    </div>
+          <div class="col-sm-3 mb-xs">
+                      <div class="form-group">
+                      <input type="hidden"  name="' . $saveUpdate . '" >
+                      <input type="hidden" class="idVehicle"  name="idVehicle" >
+                           <label class="control-label">PROPIETARIO<span class="required">*</span> </label>
+                          <input type="text" name="owner" class="form-control owner"  maxlength="100"  required title="Este campo es obligatorio" >
+                      </div>
+                    </div>
+          <div class="col-sm-3 mb-xs">
+                      <div class="form-group">
+                      <input type="hidden"  name="' . $saveUpdate . '" >
+                      <input type="hidden" class="idVehicle"  name="idVehicle" >
+                           <label class="control-label">ESTADO<span class="required">*</span> </label>
+                          <input type="text" name="estado" class="form-control estado"  maxlength="15"  required title="Este campo es obligatorio" >
+                      </div>
+                    </div>
+          <div class="col-sm-3 mb-xs">
+                      <div class="form-group">
+                      <input type="hidden"  name="' . $saveUpdate . '" >
+                      <input type="hidden" class="idVehicle"  name="idVehicle" >
+                           <label class="control-label">AÑO DE MODELO<span class="required">*</span> </label>
+                          <input type="number" name="modelYear" class="form-control modelYear"  maxlength="10"  required title="Este campo es obligatorio" >
+                      </div>
+                    </div>                   
    <div class="col-sm-3 mb-xs">
                       <div class="form-group">
-                      <input type="hidden"  name="'.$saveUpdate.'" >
-                      <input type="hidden" class="nserie"  name="nserie" >
-                           <label class="control-label">NÚMERO DE SERIE<span class="required">*</span> </label>
-                        <input type="text" name="nserie" class="form-control name"    required title="Este campo es obligatorio" >
+                           <label class="control-label">SEDE<span class="required">*</span> </label>
+                        <select class="form-control mb-md idDepa" name="idDepa" required="">
+    ' . mainModel::getList("SELECT * FROM tdepartamento", "idDepa") . '</select>
+                      </div>
+                    </div>                     
+     <div class="col-sm-3 mb-xs">
+                      <div class="form-group">
+                           <label class="control-label">MARCA<span class="required">*</span> </label>
+                        <select class="form-control mb-md idVehicleBrand" name="idVehicleBrand" required="">
+                            ' . mainModel::getList("SELECT * FROM tvehiclebrand", "idVehicleBrand") . '
+                          </select>
                       </div>
                     </div>
-
-
+   <div class="col-sm-3 mb-xs">
+                      <div class="form-group">
+                           <label class="control-label">MODELO<span class="required">*</span> </label>
+                        <select class="form-control mb-md idVehicleModel" name="idVehicleModel" required="">
+    ' . mainModel::getList("SELECT * FROM tvehiclemodel", "idVehicleModel") . '</select>
+                      </div>
+                    </div>                   
 </div> <div class="loadGuardadof"> </div>  ';
-                $html.='<footer class="panel-footer panf'.$saveUpdate.'">
+                $html .= '<footer class="panel-footer panf' . $saveUpdate . '">
                    <div class="row">
                       <div class="col-sm-9 col-sm-offset-3">
              <button type="submit"  class="mb-xs mt-xs mr-xs modal-basic btn btn-primary"  >Guardar</button> ';
-                    if ($saveUpdate=="save") {
-        $html.=' <a  class="btn btn-default" onclick="resetForm()">Limpiar</a>';      
-                    }
-                  else {
-    $html.=' <button class="btn btn-default modalform-dismiss">Cerrar</button>';
-}
-                    $html.=' </div>
+        if ($saveUpdate == "save") {
+            $html .= ' <a  class="btn btn-default" onclick="resetForm()">Limpiar</a>';
+        } else {
+            $html .= ' <button class="btn btn-default modalform-dismiss">Cerrar</button>';
+        }
+        $html .= ' </div>
                     </div>
                 </footer>
-              </section>';                        
- return $html;
-}
+              </section>';
+        return $html;
+    }
 
+    public function saveVehicleController() {
+        $nserie = mainModel::limpiar_cadena($_POST['nserie']);
+        $plate = mainModel::limpiar_cadena($_POST['plate']);
+        $nVin = mainModel::limpiar_cadena($_POST['nVin']);
+        $nEngine = mainModel::limpiar_cadena($_POST['nEngine']);
+        $color = mainModel::limpiar_cadena($_POST['color']);
+        $currentPlate = mainModel::limpiar_cadena($_POST['currentPlate']);
+        $previousPlate = mainModel::limpiar_cadena($_POST['previousPlate']);
+        $annotations = mainModel::limpiar_cadena($_POST['annotations']);
+        $owner = mainModel::limpiar_cadena($_POST['owner']);
+        $estado = mainModel::limpiar_cadena($_POST['estado']);
+        $modelYear = mainModel::limpiar_cadena($_POST['modelYear']);
+        $idDepa = mainModel::limpiar_cadena($_POST['idDepa']);
+        $idVehicleBrand = mainModel::limpiar_cadena($_POST['idVehicleBrand']);
+        $idVehicleModel = mainModel::limpiar_cadena($_POST['idVehicleModel']);
 
-public function saveVehicleController(){
-    $brand= mainModel::limpiar_cadena($_POST['brand']);
-    $nserie= mainModel::limpiar_cadena($_POST['nserie']);
-    //echo $name;
+        $consultaNserie = mainModel::execute_query("SELECT * FROM tvehicle WHERE nserie = '$nserie'");
 
-    $consultaNserie=mainModel::execute_query("SELECT * FROM tvehicle WHERE nserie=$nserie");
-    if ($consultaNserie->rowCount()>=1) {
-       $msg=["alert"=>"duplicidad","campo"=>$nserie];
-    }else{
+        if ($consultaNserie->rowCount() >= 1) {
+            $msg = ["alert" => "duplicidad", "campo" => $nserie];
+        } else {
+            $data = [
+                "nserie" => $nserie,
+                "plate" => $plate,
+                "nVin" => $nVin,
+                "nEngine" => $nEngine,
+                "color" => $color,
+                "currentPlate" => $currentPlate,
+                "previousPlate" => $previousPlate,
+                "annotations" => $annotations,
+                "owner" => $owner,
+                "estado" => $estado,
+                "modelYear" => $modelYear,
+                "idDepa" => $idDepa,
+                "idVehicleBrand" => $idVehicleBrand,
+                "idVehicleModel" => $idVehicleModel
+            ];
 
-    $data=[
-        "brand"=>$brand,
-        "nserie"=>$nserie
-    ];
-    //var_dump($data);
-
-   if (VehicleModel::saveVehicleModel($data)) {
-        
-        $msg=["alert"=>"save"];
-
-    }else{
-        $msg=["alert"=>"error"];
-
-    }}
-    return mainModel::mensajeRespuesta($msg);
-}
-
+            if (VehicleModel::saveVehicleModel($data)) {
+                $msg = ["alert" => "save"];
+            } else {
+                $msg = ["alert" => "error"];
+            }
+        }
+        return mainModel::mensajeRespuesta($msg);
+    }
 }
