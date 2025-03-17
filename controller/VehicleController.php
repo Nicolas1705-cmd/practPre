@@ -6,6 +6,26 @@ if ($peticionAjax) {
 }
 
 class VehicleController extends VehicleModel {
+
+
+    public function getMOdelosVehiculos($idMarcaVehiculo){
+
+        $html="";
+
+        //AQUI OBTIENES DATOS DE LA BASE DE DATOS
+         $consulta = mainModel::execute_query("SELECT * FROM tvehiclemodel WHERE idVehicleBrand  = $idMarcaVehiculo");
+        $req = $consulta->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($req as $index=>$row) {
+
+             $html.= "<option value='".$row["idVehicleModel"]."'> ".$row["name"]." </option>";
+
+        }
+
+        return $html;
+
+
+    }
+
     public function listVehicleController($request, $status) {
         $cnn = mainModel::conect();
         $btn = ($status == 1) ? "danger" : "success";
@@ -189,81 +209,70 @@ $(".idVehicleModel").val("' . $req['idVehicleModel'] . '");
                     </div>
           <div class="col-sm-3 mb-xs">
                       <div class="form-group">
-                      <input type="hidden"  name="' . $saveUpdate . '" >
-                      <input type="hidden" class="idVehicle"  name="idVehicle" >
+                    
                            <label class="control-label">N° PLACA<span class="required">*</span> </label>
                           <input type="text" name="plate" class="form-control plate"  maxlength="15"  required title="Este campo es obligatorio" >
                       </div>
                     </div>
           <div class="col-sm-3 mb-xs">
                       <div class="form-group">
-                      <input type="hidden"  name="' . $saveUpdate . '" >
-                      <input type="hidden" class="idVehicle"  name="idVehicle" >
+              
                            <label class="control-label">N° VIN<span class="required">*</span> </label>
                           <input type="text" name="nVin" class="form-control nVin"  maxlength="100"  required title="Este campo es obligatorio" >
                       </div>
                     </div> 
           <div class="col-sm-3 mb-xs">
                       <div class="form-group">
-                      <input type="hidden"  name="' . $saveUpdate . '" >
-                      <input type="hidden" class="idVehicle"  name="idVehicle" >
+                      
                            <label class="control-label">N° MOTOR<span class="required">*</span> </label>
                           <input type="text" name="nEngine" class="form-control nEngine"  maxlength="100"  required title="Este campo es obligatorio" >
                       </div>
                     </div>
           <div class="col-sm-3 mb-xs">
                       <div class="form-group">
-                      <input type="hidden"  name="' . $saveUpdate . '" >
-                      <input type="hidden" class="idVehicle"  name="idVehicle" >
+                   
                            <label class="control-label">COLOR<span class="required">*</span> </label>
                           <input type="text" name="color" class="form-control color"  maxlength="100"  required title="Este campo es obligatorio" >
                       </div>
                     </div>
           <div class="col-sm-3 mb-xs">
                       <div class="form-group">
-                      <input type="hidden"  name="' . $saveUpdate . '" >
-                      <input type="hidden" class="idVehicle"  name="idVehicle" >
+              
                            <label class="control-label">PLACA VIGENTE<span class="required">*</span> </label>
                           <input type="text" name="currentPlate" class="form-control currentPlate"  maxlength="15"  required title="Este campo es obligatorio" >
                       </div>
                     </div>
           <div class="col-sm-3 mb-xs">
                       <div class="form-group">
-                      <input type="hidden"  name="' . $saveUpdate . '" >
-                      <input type="hidden" class="idVehicle"  name="idVehicle" >
+                
                            <label class="control-label">PLACA ANTERIOR<span class="required">*</span> </label>
                           <input type="text" name="previousPlate" class="form-control previousPlate"  maxlength="15"  required title="Este campo es obligatorio" >
                       </div>
                     </div>
           <div class="col-sm-3 mb-xs">
                       <div class="form-group">
-                      <input type="hidden"  name="' . $saveUpdate . '" >
-                      <input type="hidden" class="idVehicle"  name="idVehicle" >
+                    
                            <label class="control-label">ANOTACIONES<span class="required">*</span> </label>
                           <input type="text" name="annotations" class="form-control annotations"  maxlength="255"  required title="Este campo es obligatorio" >
                       </div>
                     </div>
           <div class="col-sm-3 mb-xs">
                       <div class="form-group">
-                      <input type="hidden"  name="' . $saveUpdate . '" >
-                      <input type="hidden" class="idVehicle"  name="idVehicle" >
+                     
                            <label class="control-label">PROPIETARIO<span class="required">*</span> </label>
                           <input type="text" name="owner" class="form-control owner"  maxlength="100"  required title="Este campo es obligatorio" >
                       </div>
                     </div>
           <div class="col-sm-3 mb-xs">
                       <div class="form-group">
-                      <input type="hidden"  name="' . $saveUpdate . '" >
-                      <input type="hidden" class="idVehicle"  name="idVehicle" >
+                 
                            <label class="control-label">ESTADO<span class="required">*</span> </label>
                           <input type="text" name="estado" class="form-control estado"  maxlength="15"  required title="Este campo es obligatorio" >
                       </div>
                     </div>
           <div class="col-sm-3 mb-xs">
                       <div class="form-group">
-                      <input type="hidden"  name="' . $saveUpdate . '" >
-                      <input type="hidden" class="idVehicle"  name="idVehicle" >
-                           <label class="control-label">AÑO DE MODELO<span class="required">*</span> </label>
+                                            <label class="control-label">AÑO DE MODELO<span class="required">*</span> </label>
                           <input type="number" name="modelYear" class="form-control modelYear"  maxlength="10"  required title="Este campo es obligatorio" >
                       </div>
                     </div>                   
@@ -277,8 +286,9 @@ $(".idVehicleModel").val("' . $req['idVehicleModel'] . '");
      <div class="col-sm-3 mb-xs">
                       <div class="form-group">
                            <label class="control-label">MARCA<span class="required">*</span> </label>
-                        <select class="form-control mb-md idVehicleBrand" name="idVehicleBrand" required="">
-                            ' . mainModel::getList("SELECT * FROM tvehiclebrand", "idVehicleBrand") . '
+                        <select class="form-control mb-md idVehicleBrand" name="idVehicleBrand" onchange="actualizarModelos()" required="">
+                        <?php echo
+                            ' . mainModel::getList("SELECT * FROM tvehiclebrand", "idVehicleBrand") . ' 
                           </select>
                       </div>
                     </div>
@@ -286,7 +296,7 @@ $(".idVehicleModel").val("' . $req['idVehicleModel'] . '");
                       <div class="form-group">
                            <label class="control-label">MODELO<span class="required">*</span> </label>
                         <select class="form-control mb-md idVehicleModel" name="idVehicleModel" required="">
-    ' . mainModel::getList("SELECT * FROM tvehiclemodel", "idVehicleModel") . '</select>
+    </select>
                       </div>
                     </div>                   
 </div> <div class="loadGuardadof"> </div>  ';
@@ -351,5 +361,9 @@ $(".idVehicleModel").val("' . $req['idVehicleModel'] . '");
             }
         }
         return mainModel::mensajeRespuesta($msg);
+
+
+
+
     }
 }

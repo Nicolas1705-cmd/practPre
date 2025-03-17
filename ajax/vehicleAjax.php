@@ -4,7 +4,7 @@ $peticionAjax = true;
 require_once "../core/config.php";
 session_start();
 
-if (isset($_POST['save']) || isset($_POST['datatable']) || isset($_GET['btnActivaEliminar']) || isset($_POST['update']) || isset($_GET['formupdate'])) {
+if (isset($_POST['save']) || isset($_POST['datatable']) || isset($_GET['btnActivaEliminar']) || isset($_POST['update']) || isset($_GET['formupdate']) || isset($_GET['evento'])) {
     require_once "../controller/VehicleController.php";
     $inst = new VehicleController();
 
@@ -23,6 +23,11 @@ if (isset($_POST['save']) || isset($_POST['datatable']) || isset($_GET['btnActiv
         $id = isset($_GET['id']) ? $_GET['id'] : null;
         $status = isset($_GET['status']) ? $_GET['status'] : null;
         echo $inst->activaDeleteBrandController($id, $status);
+    }
+
+
+ if (isset($_GET['evento'])) {
+        echo $inst->getMOdelosVehiculos($_GET['idMarcaVehiculo'] ); 
     }
 
     if (isset($_POST['update'])) {

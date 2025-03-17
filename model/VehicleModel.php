@@ -55,5 +55,18 @@ class VehicleModel extends mainModel
             // Manejo de errores (opcional)
             return false;
         }
+
+
+
     }
+
+
+
+    protected function getModelsByBrand($idBrand){
+    $sql = mainModel::conect()->prepare("SELECT idVehicleModel, name FROM tvehiclemodel WHERE idVehicleBrand = :idBrand");
+    $sql->bindParam(":idBrand", $idBrand);
+    $sql->execute();
+    return $sql->fetchAll(PDO::FETCH_ASSOC);
+}
+
 }

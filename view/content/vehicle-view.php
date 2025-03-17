@@ -2,11 +2,13 @@
 require_once "./controller/VehicleController.php";
 $inst = new VehicleController();  
 $titulo = "Vehicle"; 
-$ajaxGlobal = "VehicleAjax";   
+$ajaxGlobal = "vehicleAjax";   
 $typeElemento = "data-type='lista'";
 ?>
 
 <input type="hidden" id="ajax" value="<?php echo $ajaxGlobal; ?>" >
+<input type="hidden" id="url" value="<?php echo SERVERURL; ?>" >
+
 
 <header class="page-header">
     <h2>Vehículos</h2>
@@ -97,6 +99,13 @@ $typeElemento = "data-type='lista'";
               </div>
 
               </div>
+
+
+
+    
+
+
+
             </section>
                 
            

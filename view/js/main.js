@@ -1,4 +1,23 @@
+/**CAMBIOS NOVILLO**/
 
+function actualizarModelos(){
+
+    var ajax = $("#ajax").val();
+      var url = $("#url").val();
+    var idMarcaVehiculo = $(".idVehicleBrand").val();
+
+   
+     $.get(url + "ajax/" + ajax + ".php", { evento: "ok",idMarcaVehiculo: idMarcaVehiculo}, function (respuesta) {
+
+        $(".idVehicleModel").html(respuesta);
+
+
+     });
+}
+
+
+
+/**FIND E CAMBIOS NOVILLO**/
 
 function addDetalleCargaExcel(datos,saveupdate){
     //console.log(datos);
