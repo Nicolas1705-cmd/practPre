@@ -27,78 +27,79 @@ class VehicleController extends VehicleModel {
     }
 
     public function listVehicleController($request, $status) {
-        $cnn = mainModel::conect();
-        $btn = ($status == 1) ? "danger" : "success";
-        $icon = ($status == 1) ? "trash fa-lg" : "check fa-lg";
+    $cnn = mainModel::conect();
+    $btn = ($status == 1) ? "danger" : "success";
+    $icon = ($status == 1) ? "trash fa-lg" : "check fa-lg";
 
-        $col = array(0 => 'idVehicle', 1 => 'nserie', 2 => 'plate', 3 => 'nVin', 4 => 'nEngine', 5 => 'color', 6 => 'currentPlate', 7 => 'previousPlate', 8 => 'annotations', 9 => 'owner', 10 => 'estado', 11 => 'modelYear', 12 => 'idDepa', 13 => 'idVehicleBrand', 14 => 'idVehicleModel', 15 => 'dateRegister');
-        $index = ($request['order'][0]['column'] != 5) ? $request['order'][0]['column'] : 0;
+    $col = array(0 => 'idVehicle', 1 => 'nserie', 2 => 'color', 3 => 'estado', 4 => 'modelYear', 5 => 'nombre_departamento', 6 => 'nombre_marca', 7 => 'nombre_modelo', 8 => 'dateRegister');
+    $index = ($request['order'][0]['column'] != 5) ? $request['order'][0]['column'] : 0;
 
-        $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM tvehicle WHERE status = :status";
+    $sql = "SELECT SQL_CALC_FOUND_ROWS tvehicle.*, 
+                   tdepartamento.name AS nombre_departamento,
+                   tvehiclebrand.name AS nombre_marca,
+                   tvehiclemodel.name AS nombre_modelo
+            FROM tvehicle 
+            INNER JOIN tdepartamento ON tvehicle.idDepa = tdepartamento.idDepa 
+            INNER JOIN tvehiclebrand ON tvehicle.idVehicleBrand = tvehiclebrand.idVehicleBrand
+            INNER JOIN tvehiclemodel ON tvehicle.idVehicleModel = tvehiclemodel.idVehicleModel
+            WHERE tvehicle.status = :status";
+
+    $query = $cnn->prepare($sql);
+    $query->bindParam(':status', $status);
+    $query->execute();
+
+    if (!empty($request['search']['value'])) {
+        $sql .= " AND nserie LIKE :search";
         $query = $cnn->prepare($sql);
+        $searchValue = "%" . $request['search']['value'] . "%";
+        $query->bindParam(':search', $searchValue);
         $query->bindParam(':status', $status);
         $query->execute();
-
-        if (!empty($request['search']['value'])) {
-            $sql .= " AND nserie LIKE :search";
-            $query = $cnn->prepare($sql);
-            $searchValue = "%" . $request['search']['value'] . "%";
-            $query->bindParam(':search', $searchValue);
-            $query->bindParam(':status', $status);
-            $query->execute();
-        }
-
-        $totalData = $cnn->query("SELECT FOUND_ROWS()")->fetchColumn();
-        if (isset($request['order'])) {
-            $sql .= " ORDER BY " . $col[$index] . " " . $request['order'][0]['dir'] . " LIMIT :start, :length";
-            $query = $cnn->prepare($sql);
-            $query->bindParam(':start', $request['start'], PDO::PARAM_INT);
-            $query->bindParam(':length', $request['length'], PDO::PARAM_INT);
-            $query->bindParam(':status', $status);
-            $query->execute();
-        }
-
-        $data = array();
-        $contador = 0;
-        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-            $subdata = array();
-            $contador++;
-            $encryp = mainModel::encryption($row['idVehicle']);
-            $row['idVehicle'] = $encryp;
-
-            $subdata[] = $contador;
-            $subdata[] = $row['nserie'];
-            $subdata[] = $row['plate'];
-            $subdata[] = $row['nVin'];
-            $subdata[] = $row['nEngine'];
-            $subdata[] = $row['color'];
-            $subdata[] = $row['currentPlate'];
-            $subdata[] = $row['previousPlate'];
-            $subdata[] = $row['annotations'];
-            $subdata[] = $row['owner'];
-            $subdata[] = $row['estado'];
-            $subdata[] = $row['modelYear'];
-            $subdata[] = $row['idDepa'];
-            $subdata[] = $row['idVehicleBrand'];
-            $subdata[] = $row['idVehicleModel'];
-            $subdata[] = $row['dateRegister'];
-
-            $operacionescrud = "<a onclick='rellEditV2(`" . $encryp . "`,`vehicleAjax`,`" . SERVERURL . "`,`idVehicle`)' class='btn btn-primary btn-xs  mr-xs' data-toggle='modal' data-target='#modalesForm'><i class='fa-regular fa-pen-to-square'></i></a>";
-            $operacionescrud .= "<button type='submit' onclick='modalOnActivaDeleteDataTable(`vehicleAjax`,`" . $encryp . "`,`" . $status . "`,`" . SERVERURL . "`)' class='btn btn-" . $btn . " btn-xs '> <i class='fa fa-" . $icon . "'></i></button>";
-
-            $subdata[] = $operacionescrud;
-            $data[] = $subdata;
-        }
-
-
-        $json_data = array(
-            "draw" => isset($request['draw']) ? intval($request['draw']) : 0,
-            "recordsTotal" => intval($totalData),
-            "recordsFiltered" => intval($totalData),
-            "data" => $data
-        );
-        return json_encode($json_data);
     }
+
+    $totalData = $cnn->query("SELECT FOUND_ROWS()")->fetchColumn();
+
+    if (isset($request['order'])) {
+        $sql .= " ORDER BY " . $col[$index] . " " . $request['order'][0]['dir'] . " LIMIT :start, :length";
+        $query = $cnn->prepare($sql);
+        $query->bindParam(':start', $request['start'], PDO::PARAM_INT);
+        $query->bindParam(':length', $request['length'], PDO::PARAM_INT);
+        $query->bindParam(':status', $status);
+        $query->execute();
+    }
+
+    $data = array();
+    $contador = 0;
+    while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+        $subdata = array();
+        $contador++;
+        $encryp = mainModel::encryption($row['idVehicle']);
+        $row['idVehicle'] = $encryp;
+        $subdata[] = $contador;
+        $subdata[] = $row['nserie'];
+        $subdata[] = $row['color'];
+        $subdata[] = $row['estado'];
+        $subdata[] = $row['modelYear'];
+        $subdata[] = $row['nombre_departamento']; // Nombre del departamento
+        $subdata[] = $row['nombre_marca'];        // Nombre de la marca
+        $subdata[] = $row['nombre_modelo'];       // Nombre del modelo
+        $subdata[] = $row['dateRegister'];
+
+        $operacionescrud = "<a onclick='rellEditV2(" . $encryp . ",vehicleAjax," . SERVERURL . ",idVehicle)' class='btn btn-primary btn-xs  mr-xs' data-toggle='modal' data-target='#modalesForm'><i class='fa-regular fa-pen-to-square'></i></a>";
+        $operacionescrud .= "<button type='submit' onclick='modalOnActivaDeleteDataTable(vehicleAjax," . $encryp . "," . $status . "," . SERVERURL . ")' class='btn btn-" . $btn . " btn-xs '> <i class='fa fa-" . $icon . "'></i></button>";
+
+        $subdata[] = $operacionescrud;
+        $data[] = $subdata;
+    }
+
+    $json_data = array(
+        "draw" => isset($request['draw']) ? intval($request['draw']) : 0,
+        "recordsTotal" => intval($totalData),
+        "recordsFiltered" => intval($totalData),
+        "data" => $data
+    );
+    return json_encode($json_data);
+}
 
     public function activaDeleteBrandController($idElemento, $status) {
         $idElemento = mainModel::limpiar_cadena($idElemento);

@@ -312,7 +312,7 @@ $html.=$subtitulo;
     <div class="col-sm-3 mb-xs">
                       <div class="form-group">
                      
-                           <label class="control-label">FECHCA DE VENCIMIENTO DE LA LICENCIA <span class="required">*</span> </label>
+                           <label class="control-label">FECHA DE VENCIMIENTO DE LA LICENCIA <span class="required">*</span> </label>
                         <input type="text" name="licenseExpirationDate" class="form-control licenseExpirationDate"    required title="Este campo es obligatorio" >
                       </div>
                     </div>    

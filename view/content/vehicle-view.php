@@ -59,14 +59,9 @@ $typeElemento = "data-type='lista'";
                             <tr>
                                 <th>#</th>
                                 <th>N° Serie</th>
-                                <th>N° Placa</th>
-                                <th>N° VIN</th>
-                                <th>N° Motor</th>
+                                
                                 <th>Color</th>
-                                <th>Placa Vigente</th>
-                                <th>Placa Anterior</th>
-                                <th>Anotaciones</th>
-                                <th>Propietario</th>
+                                
                                 <th>Estado</th>
                                 <th>Año de Modelo</th>
                                 <th>Sede</th>
