@@ -1,4 +1,5 @@
 <?php 
+//session_start();
 if ($peticionAjax) {
     require_once "../model/VehicleModel.php";
 } else {
@@ -80,9 +81,9 @@ class VehicleController extends VehicleModel {
         $subdata[] = $row['color'];
         $subdata[] = $row['estado'];
         $subdata[] = $row['modelYear'];
-        $subdata[] = $row['nombre_departamento']; // Nombre del departamento
-        $subdata[] = $row['nombre_marca'];        // Nombre de la marca
-        $subdata[] = $row['nombre_modelo'];       // Nombre del modelo
+        $subdata[] = $row['nombre_departamento'];
+        $subdata[] = $row['nombre_marca'];
+        $subdata[] = $row['nombre_modelo'];
         $subdata[] = $row['dateRegister'];
 
         $operacionescrud = "<a onclick='rellEditV2(" . $encryp . ",vehicleAjax," . SERVERURL . ",idVehicle)' class='btn btn-primary btn-xs  mr-xs' data-toggle='modal' data-target='#modalesForm'><i class='fa-regular fa-pen-to-square'></i></a>";
@@ -142,6 +143,7 @@ $(".modelYear").val("' . $req['modelYear'] . '");
 $(".idDepa").val("' . $req['idDepa'] . '");
 $(".idVehicleBrand").val("' . $req['idVehicleBrand'] . '");
 $(".idVehicleModel").val("' . $req['idVehicleModel'] . '");
+$(".idPersonal").val("' . $req['idPersonal'] . '");
 </script>';
         return $cuerpo;
     }
@@ -163,6 +165,7 @@ $(".idVehicleModel").val("' . $req['idVehicleModel'] . '");
         $idDepa = mainModel::limpiar_cadena($_POST['idDepa']);
         $idVehicleBrand = mainModel::limpiar_cadena($_POST['idVehicleBrand']);
         $idVehicleModel = mainModel::limpiar_cadena($_POST['idVehicleModel']);
+        $idPersonal = mainModel::decryption($_SESSION['Encryuser']);
 
         $data = [
             "idVehicle" => $idVehicle,
@@ -179,7 +182,8 @@ $(".idVehicleModel").val("' . $req['idVehicleModel'] . '");
             "modelYear" => $modelYear,
             "idDepa" => $idDepa,
             "idVehicleBrand" => $idVehicleBrand,
-            "idVehicleModel" => $idVehicleModel
+            "idVehicleModel" => $idVehicleModel,
+            "idPersonal" => $idPersonal
         ];
 
         if (VehicleModel::updateVehicleModel($data)) {
@@ -332,6 +336,7 @@ $(".idVehicleModel").val("' . $req['idVehicleModel'] . '");
         $idDepa = mainModel::limpiar_cadena($_POST['idDepa']);
         $idVehicleBrand = mainModel::limpiar_cadena($_POST['idVehicleBrand']);
         $idVehicleModel = mainModel::limpiar_cadena($_POST['idVehicleModel']);
+        $idPersonal = mainModel::decryption($_SESSION['Encryuser']);
 
         $consultaNserie = mainModel::execute_query("SELECT * FROM tvehicle WHERE nserie = '$nserie'");
 
@@ -352,7 +357,8 @@ $(".idVehicleModel").val("' . $req['idVehicleModel'] . '");
                 "modelYear" => $modelYear,
                 "idDepa" => $idDepa,
                 "idVehicleBrand" => $idVehicleBrand,
-                "idVehicleModel" => $idVehicleModel
+                "idVehicleModel" => $idVehicleModel,
+                "idPersonal" => $idPersonal
             ];
 
             if (VehicleModel::saveVehicleModel($data)) {
