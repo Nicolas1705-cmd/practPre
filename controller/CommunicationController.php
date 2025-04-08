@@ -302,12 +302,19 @@ $html.=$subtitulo;
 }
 
 public function saveCommunicationController(){
-    $title= mainModel::limpiar_cadena($_POST['title']);
-    $subtitle= mainModel::limpiar_cadena($_POST['subtitle']);
-    $imagen= mainModel::limpiar_cadena($_POST['imagen']);
-    $emails= mainModel::limpiar_cadena($_POST['emails']);
-    $idPersonal= mainModel::limpiar_cadena($_POST['idPersonal']);
-    $idtypeCommunication= mainModel::limpiar_cadena($_POST['idtypeCommunication']);
+   // $title= mainModel::limpiar_cadena($_POST['title']);
+   //$imagen= mainModel::limpiar_cadena($_POST['imagen']);
+    //$emails= mainModel::limpiar_cadena($_POST['emails']);
+   // $idPersonal= mainModel::limpiar_cadena($_POST['idPersonal']);
+   // $idtypeCommunication= mainModel::limpiar_cadena($_POST['idtypeCommunication']);
+
+    $title = $_POST['title'];
+    $subtitle = $_POST['subtitle'];
+    $imagen = $_POST['imagen'];
+    $emails = $_POST['emails'];
+    $idPersonal = $_POST['idPersonal'];
+    $idtypeCommunication = $_POST['idtypeCommunication'];
+
     //echo $title;
 
 //REVISARRRRRRR

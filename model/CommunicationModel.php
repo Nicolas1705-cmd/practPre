@@ -21,11 +21,11 @@ protected function saveCommunicationModel($data){
 	$sql->bindParam(":idPersonal",$data["idPersonal"]);
 	$sql->bindParam(":idtypeCommunication",$data["idtypeCommunication"]);
 	$sql->execute();
-return true;
+return false;
 }
 	protected function updateCommunicationModel($data){
 		//var_dump($data);
-		$sql=mainModel::conect()->prepare("UPDATE tcommunication SET title= :title, subtitle=:subtitle,imagen=:imagen,emails=:emails ,idPersonal=:idPersonal, idtypeCommunication=:idtypeCommunication WHERE idCommunication= :idCommunication ");
+		$sql=mainModel::conect()->prepare("UPDATE tcommunication SET title=:title, subtitle=:subtitle, imagen=:imagen, emails=:emails, idPersonal=:idPersonal, idtypeCommunication=:idtypeCommunication WHERE idCommunication=:idCommunication ");
 		$sql->bindParam(":idCommunication",$data["idCommunication"]);
 	$sql->bindParam(":title",$data["title"]);
 	$sql->bindParam(":subtitle",$data["subtitle"]);
@@ -34,7 +34,7 @@ return true;
 	$sql->bindParam(":idPersonal",$data["idPersonal"]);
 	$sql->bindParam(":idtypeCommunication",$data["idtypeCommunication"]);
 	$sql->execute();
-	return "true";
+	return false;
 	}
 
 }
