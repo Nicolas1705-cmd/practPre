@@ -1,8 +1,8 @@
-<?php
-require_once "./controller/CorreoController.php";
-$inst = new CorreoController();
-$titulo = "correo";
-$ajaxGlobal = "correoAjax";
+<?php 
+require_once "./controller/EstablecimientoController.php";
+$inst = new EstablecimientoController();  
+$titulo = "Establecimiento"; 
+$ajaxGlobal = "establecimientoAjax";   
 $typeElemento = "data-type='lista'";
 ?>
 
@@ -11,7 +11,7 @@ $typeElemento = "data-type='lista'";
 
 
 <header class="page-header">
-    <h2>Correo</h2>
+    <h2>Establecimiento</h2>
     <div class="right-wrapper pull-right">
         <ol class="breadcrumbs">
             <li>
@@ -20,12 +20,13 @@ $typeElemento = "data-type='lista'";
                 </a>
             </li>
             <li><span>Inicio</span></li>
-            <li><span>Correo</span></li>
+            <li><span>Establecimiento</span></li>
         </ol>
         <a class="sidebar-right-toggle" data-open="sidebar-right"><i class="fa fa-chevron-left"></i></a>
     </div>
 </header>
 
+<!-- start: page -->
 <section class="panel">
     <header class="panel-heading">
         <div class="panel-actions">
@@ -33,7 +34,7 @@ $typeElemento = "data-type='lista'";
             <a href="#" class="fa fa-times"></a>
         </div>
         <div style="display: inline-block;">
-            <h2 class="panel-title">LISTADO</h2>
+            <h2 class="panel-title">LISTADO</h2> 
         </div>
         <div class="ml-xs" style="display: inline;">
             <div class="switch switch-sm switch-primary">
@@ -57,43 +58,47 @@ $typeElemento = "data-type='lista'";
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Nombre del Destinatario</th>
-                                <th>Correo del Destinatario</th>
-                                <th>Asunto del Correo</th>
-                                <th>Descripción</th>
-                                <th>imagen</th>
+                                <th>Nombre</th>
+                                <th>Direccion</th>                               
+                                <th>Departamento</th>
+                                <th>Provincia</th>
+                                <th>Distrito</th>  
                                 <th>Fecha de registro</th>
                                 <th class="hidden-phone">Acción</th>
                             </tr>
                         </thead>
                         <tbody>
-                            </tbody>
+                            <!-- Los datos se llenarán mediante AJAX -->
+                        </tbody>
                     </table>
                 </div>
                 <div id="recent" class="tab-pane">
                     <div class="col-md-12">
-                        <h3>Registro y Envío de Correo Publicitario</h3>
-                      <form class="formAjax" action="<?php echo SERVERURL; ?>ajax/correoAjax.php" method="POST" data-form="save" data-ajax="correoAjax" data-urlhttp="<?php echo SERVERURL; ?>" <?php echo $multipart ?>  autocomplete="off" >
-
-                 <?php echo $inst->paintForm("save"); ?>
+                        <form class="formAjax" action="<?php echo SERVERURL; ?>ajax/establecimientoAjax.php" method="POST" data-form="save" data-ajax="establecimientoAjax" data-urlhttp="<?php echo SERVERURL; ?>" <?php echo isset($multipart) ? $multipart : ''; ?> autocomplete="off">
+                          
+                            <?php echo $inst->paintForm("save"); ?>
                              <div class="RespuestaAjax"></div>
 
                </form>
                     </div>
+
+
                   </div>
+                               
+
                 </div>
               </div>
+
+              </div>
+
+
+
+    
+
+
+
             </section>
-          <script>
-    function resetFormPublicitario() {
-        document.querySelector('#recent input[name="name"]').value = '';
-        document.querySelector('#recent input[name="tipoEnvio"]').value = '';
-        document.querySelector('#recent input[name="idEmail"]').value = '';
-        document.querySelector('#recent textarea[name="addressee"]').value = '';
-        document.querySelector('#recent input[name="description"]').value = '';
-        document.querySelector('#recent input[name="image"]').value = '';
-        $(".cajaenviar_publicitario").html('');
-        $(".loadGuardadoPublicitario").html('');
-        $(".panfenviar_publicitario").removeClass('panel-footer-guarda');
-    }
-</script>
+                
+           
+       
+          <!-- end: page -->

@@ -25,13 +25,13 @@ class ProductosController extends ProductosModel{
 
 
 //AQUI ALMACENO LOS ATRIBUTOS DE MI TABLA DE MI BASE DE DATOS QUE QUIERO QUE SE MUESTREN EN LA VISTA
-$col =array(
-    0 =>'idProductos',
-    1 =>'name',
-    2=>'description',
-    2=>'lote',
-    4=>'dateRegister'
-);  
+$col = array(
+    0 => 'idProduct',
+    1 => 'name',
+    2 => 'description',
+    3 => 'lote',
+    4 => 'dateRegister'
+);
 $index=0;
 if ($request['order'][0]['column']!=5) {
 $index=$request['order'][0]['column'];
@@ -70,8 +70,8 @@ while($row = $query->fetch(PDO::FETCH_ASSOC)){
     //var_dump($row);
     $subdata=array();
     $contador = $contador+1;
-    $encryp=mainModel::encryption($row['idProductos']);
-    $row['idProductos']=$encryp;
+    $encryp=mainModel::encryption($row['idProduct']);
+    $row['idProduct']=$encryp;
 
 //AQUI DEBEN IR EN ORDEN LOS ATRIBUTOS A MOSTRAR EN LA VISTA
     $subdata[]=$contador;
@@ -107,7 +107,7 @@ return json_encode($json_data);
       $status=mainModel::limpiar_cadena($status);
 
 //AQUI PONDREMOS EL PRIMER PARAMETRO SERA EL NOMBRE EXACTO DE TU TABLA EN LA BASE DE DATOS Y EL ULTIMO PARAMETRO SERA EL ID DE LA MISMA TABLA
-      if(mainModel::activateDeleteSimple("tproductos",$idElemento,$status,"idProductos")){
+      if(mainModel::activateDeleteSimple("tproductos",$idElemento,$status,"idProduct")){
         if($status==1){
         $msg=["alert"=>"delete"]; 
       }else{
@@ -156,7 +156,7 @@ $html.=$subtitulo;
                     <div class="col-sm-3 mb-xs">
                       <div class="form-group">
                       <input type="hidden"  name="'.$saveUpdate.'" >
-                      <input type="hidden" class="idProductos"  name="idProductos" >
+                      <input type="hidden" class="idProduct"  name="idProduct" >
                            <label class="control-label">Productos<span class="required">*</span> </label>
                         <input type="text" name="name" class="form-control name"    required>
                       </div>

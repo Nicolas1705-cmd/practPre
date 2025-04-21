@@ -4,18 +4,57 @@ function actualizarModelos(){
 
     var ajax = $("#ajax").val();
       var url = $("#url").val();
-    var idMarcaVehiculo = $(".idVehicleBrand").val();
-
-   
+    var idMarcaVehiculo = $(".idVehicleBrand").val(); 
+    
      $.get(url + "ajax/" + ajax + ".php", { evento: "ok",idMarcaVehiculo: idMarcaVehiculo}, function (respuesta) {
-
         $(".idVehicleModel").html(respuesta);
-
-
      });
 }
 
+$(document).ready(function() {
+    var tipoEnvioSelect = $(".tipoEnvio");
+    var idEmailSelect = $(".idEmail");
 
+    function toggleEmailField() {
+        if (tipoEnvioSelect.val() == 1) {
+            idEmailSelect.prop("disabled", true);
+        } else if (tipoEnvioSelect.val() == 2) { 
+            idEmailSelect.prop("disabled", false);
+        } else {
+            idEmailSelect.prop("disabled", false);
+        }
+    }
+
+    toggleEmailField();
+
+    tipoEnvioSelect.on("change", function() {
+        toggleEmailField();
+    });
+});
+
+
+
+
+function actualizarProvincias() {
+    var ajax = $("#ajax").val();
+    var url = $("#url").val();
+    var idDepa = $(".idDepa").val();
+
+    $.get(url + "ajax/" + ajax + ".php", { evento: "ok", idDepa: idDepa }, function (respuesta) {
+        $(".idProv").html(respuesta);
+        $(".idDist").html("<option value=''>Select District</option>");
+    });
+}
+
+function actualizarDistritos() {
+    var ajax = $("#ajax").val();
+    var url = $("#url").val();
+    var idProv = $(".idProv").val();
+
+    $.get(url + "ajax/" + ajax + ".php", { evento: "ok", idProv: idProv }, function (respuesta) {
+        $(".idDist").html(respuesta);
+    });
+}
 
 /**FIND E CAMBIOS NOVILLO**/
 

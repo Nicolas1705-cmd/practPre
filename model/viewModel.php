@@ -2,7 +2,7 @@
 
 class viewModel{
 	protected function get_view_model($views){
-		$listView=["home", "banks", "login", "material", "vehicle", "correo", "communication", "placas", "driver", "areas", "productos"];
+		$listView=["home", "banks", "login", "material", "vehicle", "establecimiento", "correo", "communication", "placas", "driver", "areas", "productos"];
 		if(in_array($views,$listView)){
 			if(is_file("./view/content/".$views."-view.php")){
 				$content ="./view/content/".$views."-view.php";

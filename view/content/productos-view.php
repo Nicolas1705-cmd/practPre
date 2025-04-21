@@ -1,7 +1,7 @@
      <?php 
           require_once "./controller/ProductosController.php";
           $inst= new ProductosController();  
-          $titulo = "Productos"; 
+          $titulo = "productos"; 
 $ajaxGlobal="productosAjax";   
      $typeElemento="data-type='lista'";
 

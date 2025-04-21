@@ -10,9 +10,10 @@ class CorreoModel extends mainModel
 {
     protected function saveCorreoModel($data) {
         try {
-            $sql = mainModel::conect()->prepare("INSERT INTO tcorreo(name, email, addressee, description, image) VALUES (:name, :email, :addressee, :description, :image)");
+            $sql = mainModel::conect()->prepare("INSERT INTO tcorreo(name, tipoEnvio, idEmail, addressee, description, image) VALUES (:name, :tipoEnvio, :idEmail, :addressee, :description, :image)");
             $sql->bindParam(":name", $data["name"]);
-            $sql->bindParam(":email", $data["email"]);
+            $sql->bindParam(":tipoEnvio", $data["tipoEnvio"]);
+            $sql->bindParam(":idEmail", $data["idEmail"]);
             $sql->bindParam(":addressee", $data["addressee"]);
             $sql->bindParam(":description", $data["description"]);
             $sql->bindParam(":image", $data["image"]);
@@ -30,10 +31,11 @@ class CorreoModel extends mainModel
 
     protected function updateCorreoModel($data) {
         try {
-            $sql = mainModel::conect()->prepare("UPDATE tcorreo SET name = :name, email = :email, addressee = :addressee, description = :description, image = :image WHERE idCorreo = :idCorreo");
+            $sql = mainModel::conect()->prepare("UPDATE tcorreo SET name = :name, tipoEnvio = :tipoEnvio, idEmail = :idEmail, addressee = :addressee, description = :description, image = :image WHERE idCorreo = :idCorreo");
             $sql->bindParam(":idCorreo", $data["idCorreo"]);
             $sql->bindParam(":name", $data["name"]);
-            $sql->bindParam(":email", $data["email"]);
+            $sql->bindParam(":tipoEnvio", $data["tipoEnvio"]);
+            $sql->bindParam(":idEmail", $data["idEmail"]);
             $sql->bindParam(":addressee", $data["addressee"]);
             $sql->bindParam(":description", $data["description"]);
             $sql->bindParam(":image", $data["image"]);

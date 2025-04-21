@@ -8,12 +8,10 @@ if ($peticionAjax) {
 
 class VehicleController extends VehicleModel {
 
-
     public function getMOdelosVehiculos($idMarcaVehiculo){
 
         $html="";
 
-        //AQUI OBTIENES DATOS DE LA BASE DE DATOS
          $consulta = mainModel::execute_query("SELECT * FROM tvehiclemodel WHERE idVehicleBrand  = $idMarcaVehiculo");
         $req = $consulta->fetchAll(PDO::FETCH_ASSOC);
         foreach ($req as $index=>$row) {
@@ -292,7 +290,7 @@ $(".idPersonal").val("' . $req['idPersonal'] . '");
                       <div class="form-group">
                            <label class="control-label">MARCA<span class="required">*</span> </label>
                         <select class="form-control mb-md idVehicleBrand" name="idVehicleBrand" onchange="actualizarModelos()" required="">
-                        <?php echo
+                        
                             ' . mainModel::getList("SELECT * FROM tvehiclebrand", "idVehicleBrand") . ' 
                           </select>
                       </div>

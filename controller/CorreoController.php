@@ -1,10 +1,8 @@
 <?php
-if ($peticionAjax) {
+//if ($peticionAjax) {
     require_once "../model/CorreoModel.php";
-    //require_once "../core/CorreoService.php"; // Incluimos la nueva clase de servicio
 } else {
     require_once "./model/CorreoModel.php";
-    //require_once "./core/CorreoService.php"; // Incluimos la nueva clase de servicio
 }
 
 use PHPMailer\PHPMailer\PHPMailer;
@@ -15,19 +13,15 @@ require 'PHPMailer/Exception.php';
 require 'PHPMailer/PHPMailer.php';
 require 'PHPMailer/SMTP.php';
 
-
 class CorreoController extends CorreoModel {
-
-
-
 
     public function enviarCorreoPersonalizado($datos)
 {
-    // Cargar las clases necesarias de PHPMailer
-    //require 'vendor/autoload.php'; // Asegúrate de que autoload.php se carga correctamente
+    if (empty($datos["idEmail"])) {
+        return ['status' => false, 'error' => 'La dirección de correo electrónico del destinatario no puede estar vacía.'];
+    }
 
-
-    $destinatario = $datos["email"];
+    $destinatario = $datos["idEmail"];
     $titulo = $datos["name"];
     $name = $datos["name"];
 
@@ -132,13 +126,6 @@ class CorreoController extends CorreoModel {
 </body>
 </html>";
 
-
-        // Adjuntar archivo PDF si es fase 2
-       // if ($fase == 2) {
-       //     $mail->addStringAttachment($pdfContent, 'Solicitud'.$datos["token"].'.pdf');
-       // }
-
-        // Texto sin formato HTML para clientes de correo que no soportan HTML
         $mail->AltBody = "{$mensaje} \n\n";
 
         // Enviar el correo
@@ -165,21 +152,45 @@ class CorreoController extends CorreoModel {
     }
 }
 
+public function getEMail($idEmail) {
+    $html = "";
+
+    // AQUI OBTIENES DATOS DE LA BASE DE DATOS
+    $consulta = mainModel::execute_query("SELECT * FROM temail WHERE idEmail = :idEmail");
+    $consulta->bindParam(':idEmail', $idEmail, PDO::PARAM_INT); // Vincular el parámetro
+    $consulta->execute(); // Ejecutar la consulta
+    $req = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($req as $index => $row) {
+        // Cambiar el value a $row["name"] en lugar de $row["idEmail"]
+        $html .= "<option value='" . htmlspecialchars($row["name"]) . "'> " . htmlspecialchars($row["name"]) . " </option>";
+    }
+
+    return $html;
+}
+
     public function listCorreoController($request, $status) {
         $cnn = mainModel::conect();
         $btn = ($status == 1) ? "danger" : "success";
         $icon = ($status == 1) ? "trash fa-lg" : "check fa-lg";
 
-        $col = array(0 => 'idCorreo', 1 => 'name', 2 => 'email', 3 => 'addressee', 4 => 'description', 5 => 'image', 6 => 'dateRegister');
+        $col = array(0 => 'idCorreo', 1 => 'name', 2 => 'idEmail_name', 3 => 'addressee', 4 => 'description', 5 => 'image', 6 => 'dateRegister');
         $index = ($request['order'][0]['column'] != 5) ? $request['order'][0]['column'] : 0;
 
-        $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM tcorreo WHERE status = :status";
+      /*  $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM tcorreo WHERE status = :status";*/
+
+$sql = "SELECT SQL_CALC_FOUND_ROWS tcorreo.*, 
+                   temail.name AS idEmail_name
+            FROM tcorreo 
+            LEFT JOIN temail ON tcorreo.idEmail = temail.idEmail
+            WHERE tcorreo.status = :status";
+
         $query = $cnn->prepare($sql);
         $query->bindParam(':status', $status);
         $query->execute();
 
         if (!empty($request['search']['value'])) {
-            $sql .= " AND (name LIKE :search OR email LIKE :search OR addressee LIKE :search OR description LIKE :search OR image LIKE :search)";
+            $sql .= " AND (name LIKE :search OR idEmail LIKE :search OR addressee LIKE :search OR description LIKE :search OR image LIKE :search)";
             $query = $cnn->prepare($sql);
             $searchValue = "%" . $request['search']['value'] . "%";
             $query->bindParam(':search', $searchValue);
@@ -201,16 +212,24 @@ class CorreoController extends CorreoModel {
         $data = array();
         $contador = 0;
         while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-            $subdata = array();
-            $contador++;
-            $encryp = mainModel::encryption($row['idCorreo']);
-            $row['idCorreo'] = $encryp;
-            $subdata[] = $contador;
-            $subdata[] = $row['name'];
-            $subdata[] = $row['email'];
+        $subdata = array();
+        $contador++;
+        $encryp = mainModel::encryption($row['idCorreo']);
+        $row['idCorreo'] = $encryp;
+        $subdata[] = $contador;
+        $subdata[] = $row['name'];
+
+        if ($row['tipoEnvio'] == 1) {
+            $subdata[] = "TODOS LOS CORREOS";
+        } else {
+            $subdata[] = $row['idEmail_name'];
+        }
+
+           
             $subdata[] = $row['addressee'];
             $subdata[] = $row['description'];
             $subdata[] = $row['image'];
+            //aaaa
             $subdata[] = $row['dateRegister'];
 
 
@@ -250,46 +269,60 @@ class CorreoController extends CorreoModel {
     }
 
     public function fomUpdate() {
-        $idCorreo = mainModel::limpiar_cadena($_GET['idCorreo']);
-        $idCorreo = mainModel::decryption($idCorreo);
+    $idCorreo = mainModel::limpiar_cadena($_GET['idCorreo']);
+    $idCorreo = mainModel::decryption($idCorreo);
 
-        $consulta = mainModel::execute_query("SELECT * FROM tcorreo WHERE idCorreo = $idCorreo");
-        $req = $consulta->fetch(PDO::FETCH_ASSOC);
-        $cuerpo = ' <script>
+    $consulta = mainModel::execute_query("SELECT * FROM tcorreo WHERE idCorreo = $idCorreo");
+    $req = $consulta->fetch(PDO::FETCH_ASSOC);
+    $cuerpo = ' <script>
 $(".name").val("' . $req['name'] . '");
-$(".email").val("' . $req['email'] . '");
-$(".addressee").val("' . $req['addressee'] . '");
+$(".tipoEnvio").val("' . $req['tipoEnvio'] . '");';
+
+    if ($req['tipoEnvio'] == 2 && $req['idEmail'] !== null) {
+        $cuerpo .= '$(".idEmail").val("' . $req['idEmail'] . '");';
+    } else {
+        // Si tipoEnvio es 1 o idEmail es null, no preseleccionamos nada específico
+        $cuerpo .= '$(".idEmail").val(""); // O podrías seleccionar una opción por defecto si la tienes';
+    }
+
+    $cuerpo .= '$(".addressee").val("' . $req['addressee'] . '");
 $(".description").val("' . $req['description'] . '");
 $(".image").val("' . $req['image'] . '");
 </script>';
-        return $cuerpo;
-    }
+    return $cuerpo;
+}
 
     public function updateCorreoController() {
-        $idCorreo = mainModel::limpiar_cadena($_POST['idCorreo']);
-        $idCorreo = mainModel::decryption($idCorreo);
-        $name = mainModel::limpiar_cadena($_POST['name']);
-        $email = mainModel::limpiar_cadena($_POST['email']);
-        $addressee = mainModel::limpiar_cadena($_POST['addressee']);
-        $description = mainModel::limpiar_cadena($_POST['description']);
-        $image = mainModel::limpiar_cadena($_POST['image']);
-
-        $data = [
-            "idCorreo" => $idCorreo,
-            "name" => $name,
-            "email" => $email,
-            "addressee" => $addressee,
-            "description" => $description,
-            "image" => $image
-        ];
-
-        if (CorreoModel::updateCorreoModel($data)) {
-            $msg = ["alert" => "save"];
-        } else {
-            $msg = ["alert" => "error"];
-        }
-        return mainModel::mensajeRespuesta($msg);
+    $idCorreo = mainModel::limpiar_cadena($_POST['idCorreo']);
+    $idCorreo = mainModel::decryption($idCorreo);
+    $name = mainModel::limpiar_cadena($_POST['name']);
+    $tipoEnvio = mainModel::limpiar_cadena($_POST['tipoEnvio']);
+    $idEmail = null;
+    if ($tipoEnvio == 2 && isset($_POST['idEmail']) && $_POST['idEmail'] !== '') {
+        $idEmail = mainModel::limpiar_cadena($_POST['idEmail']);
     }
+
+    $addressee = mainModel::limpiar_cadena($_POST['addressee']);
+    $description = mainModel::limpiar_cadena($_POST['description']);
+    $image = mainModel::limpiar_cadena($_POST['image']);
+
+    $data = [
+        "idCorreo" => $idCorreo,
+        "name" => $name,
+        "tipoEnvio" => $tipoEnvio,
+        "idEmail" => $idEmail,
+        "addressee" => $addressee,
+        "description" => $description,
+        "image" => $image
+    ];
+
+    if (CorreoModel::updateCorreoModel($data)) {
+        $msg = ["alert" => "save"];
+    } else {
+        $msg = ["alert" => "error"];
+    }
+    return mainModel::mensajeRespuesta($msg);
+}
 
     public function paintForm($saveUpdate) {
         $titulo = ($saveUpdate == "save") ? "Registro de Destinatario" : "Editor de Destinatario";
@@ -312,12 +345,21 @@ $(".image").val("' . $req['image'] . '");
                           </div>
                     </div>
 
-          <div class="col-sm-3 mb-xs">
+                    <div class="col-sm-3 mb-xs">
                       <div class="form-group">
-                           <label class="control-label">Correo electrónico del Destinatario<span class="required">*</span> </label>
-                          <input type="email" name="email" class="form-control email"  maxlength="100"  required title="Este campo es obligatorio" >
+                           <label class="control-label">tipo de envio<span class="required">*</span> </label>
+                        <select class="form-control mb-md tipoEnvio" name="tipoEnvio" required="">
+<option value="1" > TODOS </option> <option value="2" > Personalizado </option> </select>
                       </div>
-                    </div>
+                    </div> 
+
+<div class="col-sm-3 mb-xs">
+                      <div class="form-group">
+                           <label class="control-label">email<span class="required">*</span> </label>
+                        <select class="form-control mb-md idEmail" name="idEmail">
+    ' . mainModel::getList("SELECT * FROM temail", "idEmail") . '</select>
+                      </div>
+                    </div> 
 
           <div class="col-sm-3 mb-xs">
                       <div class="form-group">
@@ -360,81 +402,107 @@ $(".image").val("' . $req['image'] . '");
     }
 
 public function saveCorreoController() {
+    error_log("Inicio de saveCorreoController", 0);
         $name = mainModel::limpiar_cadena($_POST['name']);
-        $email = mainModel::limpiar_cadena($_POST['email']);
-        $addressee = mainModel::limpiar_cadena($_POST['addressee']);
-        $description = mainModel::limpiar_cadena($_POST['description']);
-        $imageName = ''; // Inicializamos el nombre de la imagen
+    $tipoEnvio = mainModel::limpiar_cadena($_POST['tipoEnvio']);
+    $idEmail = null; // Inicializar en null
 
-        // Verificamos si se envió una imagen
-        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $imageName = $_FILES['image']['name'];
-            // Aquí podrías realizar validaciones adicionales de la imagen (tipo, tamaño, etc.)
+    if ($tipoEnvio == 2 && isset($_POST['idEmail']) && $_POST['idEmail'] !== '') {
+        $idEmail = mainModel::limpiar_cadena($_POST['idEmail']);
+    }
+    // Si tipoEnvio es 1, $idEmail se mantiene en null (o el valor vacío que enviaste)
 
-            // *Opcional:* Si quisieras mover la imagen a tu carpeta assets/publicidad/
-            // $uploadDir = '../assets/publicidad/';
-            // $uploadFile = $uploadDir . basename($_FILES['image']['name']);
-            // if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadFile)) {
-            //     // Éxito al mover el archivo
-            // } else {
-            //     $msg = ["alert" => "error", "texto" => "Error al subir la imagen."];
-            //     return mainModel::mensajeRespuesta($msg);
-            // }
-        }
+    $addressee = mainModel::limpiar_cadena($_POST['addressee']);
+    $description = mainModel::limpiar_cadena($_POST['description']);
+    $imageName = '';
 
-        $data_registro = [
-            "name" => $name,
-            "email" => $email,
-            "addressee" => $addressee,
-            "description" => $description,
-            "image" => $imageName // Guardamos el nombre del archivo de imagen
-        ];
+    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        $imageName = $_FILES['image']['name'];
+    }
 
-        if (CorreoModel::saveCorreoModel($data_registro)) {
-            $datos_correo = [
-                'email' => $email,
-                'addressee' => $addressee,
-                'name' => $name,
-                'description' => $description,
-                'image' => $imageName // Pasamos el nombre del archivo para adjuntarlo al correo
-            ];
+    $data_registro = [
+        "name" => $name,
+        "tipoEnvio" => $tipoEnvio,
+        "idEmail" => $idEmail,
+        "addressee" => $addressee,
+        "description" => $description,
+        "image" => $imageName
+    ];
 
-            $envio = self:: enviarCorreoPersonalizado($datos_correo);
+     if (CorreoModel::saveCorreoModel($data_registro)) {
+        if ($tipoEnvio == 1) {
+            $consulta = mainModel::execute_query("SELECT email FROM tclient ");
+            $req = $consulta->fetchAll(PDO::FETCH_ASSOC);
 
-            if ($envio['status']) {
-                $msg = ["alert" => "save", "texto" => "Destinatario guardado y correo enviado correctamente." . ($imageName !== '' ? " Imagen adjunta: " . $imageName : "")];
+            $envios_exitosos = 0;
+            $errores_envio = [];
+
+            foreach ($req as $value) {
+                $datos_correo = [
+                    'idEmail' => $value["email"],
+                    'addressee' => $addressee,
+                    'name' => $name,
+                    'description' => $description,
+                    'image' => $imageName
+                ];
+                $envio = self::enviarCorreoPersonalizado($datos_correo);
+                if ($envio['status']) {
+                    $envios_exitosos++;
+                } else {
+                    $errores_envio[] = "Error al enviar a " . $value["email"] . ": " . $envio['error'];
+                }
+            }
+
+            if (empty($errores_envio)) {
+                $msg = ["alert" => "save", "texto" => "Destinatario guardado y correo enviado correctamente a todos los clientes." . ($imageName !== '' ? " Imagen adjunta: " . $imageName : "")];
             } else {
-                $msg = ["alert" => "save", "texto" => "Destinatario guardado, pero hubo un error al enviar el correo: " . $envio['error'] . ($imageName !== '' ? " (Imagen adjunta no enviada)" : "")];
+                $msg = ["alert" => "save", "texto" => "Destinatario guardado. Hubo errores al enviar a algunos clientes: " . implode(", ", $errores_envio) . ($imageName !== '' ? " (Imagen adjunta pudo haber sido enviada a algunos)" : "")];
             }
         } else {
-            $msg = ["alert" => "error", "texto" => "Error al guardar el destinatario."];
+            if ($idEmail !== null && $idEmail !== '') {
+                $datos_correo = [
+                    'idEmail' => $idEmail,
+                    'addressee' => $addressee,
+                    'name' => $name,
+                    'description' => $description,
+                    'image' => $imageName
+                ];
+                $envio = self::enviarCorreoPersonalizado($datos_correo);
+                if ($envio['status']) {
+                    $msg = ["alert" => "save", "texto" => "Destinatario guardado y correo enviado correctamente a " . $idEmail . "." . ($imageName !== '' ? " Imagen adjunta: " . $imageName : "")];
+                } else {
+                    $msg = ["alert" => "save", "texto" => "Destinatario guardado, pero hubo un error al enviar el correo a " . $idEmail . ": " . $envio['error'] . ($imageName !== '' ? " (Imagen adjunta no enviada)" : "")];
+                }
+            } else {
+                $msg = ["alert" => "save", "texto" => "Destinatario guardado. No se especificó un correo para el envío personalizado."];
+            }
         }
-        return mainModel::mensajeRespuesta($msg);
+    } else {
+        $msg = ["alert" => "error", "texto" => "Error al guardar el destinatario."];
     }
+    return mainModel::mensajeRespuesta($msg);
+}
 
         public function enviarCorreoPublicitarioController() {
         $name = mainModel::limpiar_cadena($_POST['name']);
-        $email = mainModel::limpiar_cadena($_POST['email']);
+        $idEmail = mainModel::limpiar_cadena($_POST['idEmail']);
         $addressee = mainModel::limpiar_cadena($_POST['addressee']);
         $description = mainModel::limpiar_cadena($_POST['description']);
         $image = mainModel::limpiar_cadena($_POST['image']);
 
         $datos_correo = [
-            'email' => $email,
-            'addressee' => $addressee, // Usar 'addressee' como asunto
+            'idEmail' => $idEmail,
+            'addressee' => $addressee,
             'name' => $name,
-            'description' => $description, // Usar 'description' como mensaje
+            'description' => $description,
             'image' => $image
         ];
 
-        //$resultado_envio = $this->correoService->enviarMailPersonalizado($datos_correo);
-        //var_dump($resultado_envio); exit();
-
         if ($resultado_envio['status']) {
-            // Guardar registro del envío en la tabla tcorreo
+
             $data_registro = [
                 "name" => $name,
-                "email" => $email,
+                "idEmail" => $idEmail,
                 "addressee" => $addressee,
                 "description" => $description,
                 "image" => $image
@@ -448,7 +516,6 @@ public function saveCorreoController() {
     }
 
     private function getError() {
-        // Este método ya no es necesario, la información del error se maneja en CorreoService
         return $this->correoService->getError();
     }
 }

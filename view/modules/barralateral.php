@@ -74,6 +74,13 @@
                     </a>
                   </li>
 
+                  <li <?php if ($rutaact[0]=="establecimiento" ) { ?> class="select" <?php } ?> >
+                    <a href="<?php echo SERVERURL ?>establecimiento">
+                      <i class="fa fa-home" aria-hidden="true"></i>
+                      <span>ESTABLECIMIENTO</span>
+                    </a>
+                  </li>
+
                   <li <?php if ($rutaact[0]=="correo" ) { ?> class="select" <?php } ?> >
                     <a href="<?php echo SERVERURL ?>correo">
                       <i class="fa fa-home" aria-hidden="true"></i>

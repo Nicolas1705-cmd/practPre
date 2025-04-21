@@ -30,10 +30,14 @@ if (isset($_POST['enviar_publicitario'])) {
     echo $inst->enviarCorreoPublicitarioController();
 }
 
+ if (isset($_GET['evento'])) {
+        echo $inst->getEMail($_GET['idEmail'] ); 
+    }
+
 // Nuevo bloque para manejar la petición de envío de prueba
 if (isset($_POST['enviar_prueba'])) {
     $datos = array(
-        'email' => $_POST['email'],
+        'idEmail' => $_POST['idEmail'],
         'addressee' => $_POST['addressee'],
         'name' => $_POST['name'],
         'description' => $_POST['description']
