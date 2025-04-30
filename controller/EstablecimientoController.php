@@ -11,7 +11,6 @@ class EstablecimientoController extends EstablecimientoModel {
     public function getProvincias($idDepa) {
     $html = "";
 
-    // Fetch provinces based on department
     $consulta = mainModel::execute_query("SELECT * FROM tprovincia WHERE idDepa = $idDepa");
     $req = $consulta->fetchAll(PDO::FETCH_ASSOC);
     foreach ($req as $row) {
@@ -23,7 +22,6 @@ class EstablecimientoController extends EstablecimientoModel {
     public function getDistritos($idProv) {
     $html = "";
 
-    // Fetch districts based on province
     $consulta = mainModel::execute_query("SELECT * FROM tdistrito WHERE idProv = $idProv");
     $req = $consulta->fetchAll(PDO::FETCH_ASSOC);
     foreach ($req as $row) {
@@ -90,8 +88,8 @@ class EstablecimientoController extends EstablecimientoModel {
         $subdata[] = $row['nombre_distrito'];
         $subdata[] = $row['dateRegister'];
 
-        $operacionescrud = "<a onclick='rellEditV2(" . $encryp . ",establecimientoAjax," . SERVERURL . ",idEstablecimiento)' class='btn btn-primary btn-xs  mr-xs' data-toggle='modal' data-target='#modalesForm'><i class='fa-regular fa-pen-to-square'></i></a>";
-        $operacionescrud .= "<button type='submit' onclick='modalOnActivaDeleteDataTable(establecimientoAjax," . $encryp . "," . $status . "," . SERVERURL . ")' class='btn btn-" . $btn . " btn-xs '> <i class='fa fa-" . $icon . "'></i></button>";
+        $operacionescrud = "<a onclick='rellEditV2(`".$encryp."`,`".'establecimientoAjax'."`,`".SERVERURL."`,`idEstablecimiento`)' class='btn btn-primary btn-xs  mr-xs' data-toggle='modal' data-target='#modalesForm'><i class='fa-regular fa-pen-to-square'></i></a>";
+        $operacionescrud .= "<button type='submit' onclick='modalOnActivaDeleteDataTable(`".'establecimientoAjax'."`,`".$encryp."`,".$status.",`".SERVERURL."`)' class='btn btn-" . $btn . " btn-xs '> <i class='fa fa-" . $icon . "'></i></button>";
 
         $subdata[] = $operacionescrud;
         $data[] = $subdata;
@@ -135,7 +133,6 @@ class EstablecimientoController extends EstablecimientoModel {
         $cuerpo = ' <script> 
 $(".name").val("' . $req['name'] . '");
 $(".address").val("' . $req['address'] . '");
-
 $(".idDepa").val("' . $req['idDepa'] . '");
 $(".idProv").val("' . $req['idProv'] . '");
 $(".idDist").val("' . $req['idDist'] . '");
@@ -201,14 +198,14 @@ $(".idDist").val("' . $req['idDist'] . '");
    <div class="col-sm-3 mb-xs">
                       <div class="form-group">
                            <label class="control-label">Departamento<span class="required">*</span> </label>
-                        <select class="form-control mb-md idDepa" name="idDepa" required="">
+                        <select class="form-control mb-md idDepa" name="idDepa" onchange="actualizarProvincias()" required="">
     ' . mainModel::getList("SELECT * FROM tdepartamento", "idDepa") . '</select>
                       </div>
                     </div>                     
      <div class="col-sm-3 mb-xs">
                       <div class="form-group">
                            <label class="control-label">Provincia<span class="required">*</span> </label>
-                        <select class="form-control mb-md idProv" name="idProv" onchange="actualizarModelos()" required="">
+                        <select class="form-control mb-md idProv" name="idProv" onchange="actualizarDistritos()" required="">
                         
                             ' . mainModel::getList("SELECT * FROM tprovincia", "idProv") . ' 
                           </select>

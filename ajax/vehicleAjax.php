@@ -18,13 +18,16 @@ if (isset($_POST['save']) || isset($_POST['datatable']) || isset($_GET['btnActiv
         echo $inst->saveVehicleController();
     }
 
+    if (isset($_GET['formupdate'])) {
+        echo $inst->formupdate();
+    }
+
     if (isset($_GET['btnActivaEliminar'])) {
       
         $id = isset($_GET['id']) ? $_GET['id'] : null;
         $status = isset($_GET['status']) ? $_GET['status'] : null;
         echo $inst->activaDeleteBrandController($id, $status);
     }
-
 
  if (isset($_GET['evento'])) {
         echo $inst->getMOdelosVehiculos($_GET['idMarcaVehiculo'] ); 
@@ -33,6 +36,7 @@ if (isset($_POST['save']) || isset($_POST['datatable']) || isset($_GET['btnActiv
     if (isset($_POST['update'])) {
         echo $inst->updateVehicleController(); 
     }
+
 } else {
     session_destroy();
     echo '<script> window.location.href="' . SERVERURL . 'login/"</script>';

@@ -8,6 +8,51 @@ if ($peticionAjax) {
 
 class HomeController extends mainModel
 {
+
+  public function obtenerDatosGraficoHome() {
+        $conexion = mainModel::conect();
+        $datos = [];
+        $labels = [];
+        $datasets = [];
+
+        $sql = "SELECT name, DATE(dateRegister) AS fecha_registro FROM tsolicitud ORDER BY dateRegister";
+        $resultado = $conexion->query($sql);
+
+        if ($resultado) {
+            $registros = $resultado->fetchAll(PDO::FETCH_ASSOC);
+
+            $dataPorFecha = [];
+            foreach ($registros as $registro) {
+                $fecha = $registro['fecha_registro'];
+                if (!isset($dataPorFecha[$fecha])) {
+                    $dataPorFecha[$fecha] = 0;
+                }
+                $dataPorFecha[$fecha]++;
+            }
+
+            $labels = array_keys($dataPorFecha);
+            $datasets = array_values($dataPorFecha);
+
+            $datos = [
+                'labels' => $labels,
+                'datasets' => $datasets
+            ];
+
+            $resultado = null; // Liberar el resultado
+        } else {
+            // Manejar el error de la consulta
+            error_log("Error al ejecutar la consulta: " . $conexion->error);
+            $datos = [
+                'labels' => [],
+                'datasets' => []
+            ];
+        }
+
+        $conexion = null; // Cerrar la conexión
+        return $datos;
+    }
+
+    
    public function lccontrolcargoview(){
   $idCargo=mainModel::decryption($_SESSION['Encrycargo']);
 $request=mainModel::conect()->query("SELECT * from tmodulo ");

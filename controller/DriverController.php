@@ -109,15 +109,15 @@ return $cuerpo;
 $col =array(
     0=>'idDriver',
     1=>'name',
-    2=>'lastName',
-    2=>'dateOfBirth',
-    2=>'address',
-    2=>'phone',
-    2=>'email',
-    2=>'licenseNumber',
-    2=>'licenseExpirationDate',
-    2=>'bloodType',
-    3=>'socialSecurityNumber'
+    3=>'lastName',
+    4=>'dateOfBirth',
+    5=>'address',
+    6=>'phone',
+    7=>'email',
+    8=>'licenseNumber',
+    9=>'licenseExpirationDate',
+    10=>'bloodType',
+    11=>'socialSecurityNumber'
 
 
 );  

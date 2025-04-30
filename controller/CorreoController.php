@@ -1,5 +1,5 @@
 <?php
-//if ($peticionAjax) {
+if ($peticionAjax) {
     require_once "../model/CorreoModel.php";
 } else {
     require_once "./model/CorreoModel.php";
@@ -28,7 +28,7 @@ class CorreoController extends CorreoModel {
     // Configuración del correo SMTP
     $smtpHost = "smtp.gmail.com";
     $smtpUsuario = "hola56545753@gmail.com";
-    $smtpClave = "ycwfohejgpdkgbve";
+    $smtpClave = "rfskxwoxvjoclwej";
 
     // Crear instancia de PHPMailer
     $mail = new PHPMailer(true); // Habilitar excepciones para manejo de errores
@@ -61,9 +61,9 @@ class CorreoController extends CorreoModel {
 
         // Adjuntar imágenes incrustadas
  $mail->addEmbeddedImage('../assets/fondo8.jpeg', 'fondo_correo');
-        $mail->addEmbeddedImage('../assets/wce.png', 'logo_wce');
-        $mail->addEmbeddedImage('../assets/facebook.jpeg', 'icono_facebook');
-        $mail->addEmbeddedImage('../assets/x.png', 'icono_twitter');
+        $mail->addEmbeddedImage('../assets/descarga1.png', 'logo_wce');
+        $mail->addEmbeddedImage('../assets/facebook2.jpeg', 'icono_facebook');
+        $mail->addEmbeddedImage('../assets/x.jpeg', 'icono_twitter');
         $mail->addEmbeddedImage('../assets/instagram.jpeg', 'icono_instagram');
 
         $mensaje = $datos["description"];
@@ -233,8 +233,8 @@ $sql = "SELECT SQL_CALC_FOUND_ROWS tcorreo.*,
             $subdata[] = $row['dateRegister'];
 
 
-            $operacionescrud = "<a onclick='rellEditV2(" . $encryp . ",correoAjax," . SERVERURL . ",idCorreo)' class='btn btn-primary btn-xs  mr-xs' data-toggle='modal' data-target='#modalesForm'><i class='fa-regular fa-pen-to-square'></i></a>";
-            $operacionescrud .= "<button type='submit' onclick='modalOnActivaDeleteDataTable(correoAjax," . $encryp . "," . $status . "," . SERVERURL . ")' class='btn btn-" . $btn . " btn-xs '> <i class='fa fa-" . $icon . "'></i></button>";
+            $operacionescrud = "<a onclick='rellEditV2(`".$encryp."`,`".'correoAjax'."`,`".SERVERURL."`,`idCorreo`)' class='btn btn-primary btn-xs  mr-xs' data-toggle='modal' data-target='#modalesForm'><i class='fa-regular fa-pen-to-square'></i></a>";
+            $operacionescrud .= "<button type='submit' onclick='modalOnActivaDeleteDataTable(`".'correoAjax'."`,`".$encryp."`,".$status.",`".SERVERURL."`)' class='btn btn-" . $btn . " btn-xs '> <i class='fa fa-" . $icon . "'></i></button>";
 
             $subdata[] = $operacionescrud;
             $data[] = $subdata;

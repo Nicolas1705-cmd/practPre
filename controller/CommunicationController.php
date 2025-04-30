@@ -150,7 +150,7 @@ while($row = $query->fetch(PDO::FETCH_ASSOC)){
     $subdata[]=$row['dateRegister']; 
     $operacionescrud="";
      
-        $operacionescrud.=" <a onclick='rellEditV2(`".$encryp."`,`".'communicationAjax'."`,`".SERVERURL."`,`idCommunication`)' class='btn btn-primary btn-xs  mr-xs'  data-toggle='modal' data-target='#modalesForm' ><i class='fa-regular fa-pen-to-square'></i> </a>";
+        $operacionescrud.=" <a onclick='rellEditV2(`".$encryp."`,`".'communicationAjax'."`,`".SERVERURL."`,`idCommunication`)' class='btn btn-primary btn-xs  mr-xs'  mr-xs'  data-toggle='modal' data-target='#modalesForm' ><i class='fa-regular fa-pen-to-square'></i> </a>";
 
   $operacionescrud.="<button type='submit' onclick='modalOnActivaDeleteDataTable(`".'communicationAjax'."`,`".$encryp."`,".$status.",`".SERVERURL."`)' class='btn btn-".$btn." btn-xs '> <i class='fa fa-".$icon."'></i></button> ";
       

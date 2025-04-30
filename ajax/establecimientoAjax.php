@@ -18,6 +18,10 @@ if (isset($_POST['save']) || isset($_POST['datatable']) || isset($_GET['btnActiv
         echo $inst->saveEstablecimientoController();
     }
 
+    if (isset($_GET['formupdate'])) {
+        echo $inst->formupdate();
+    }
+
     if (isset($_GET['btnActivaEliminar'])) {
       
         $id = isset($_GET['id']) ? $_GET['id'] : null;

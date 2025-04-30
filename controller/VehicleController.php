@@ -84,8 +84,8 @@ class VehicleController extends VehicleModel {
         $subdata[] = $row['nombre_modelo'];
         $subdata[] = $row['dateRegister'];
 
-        $operacionescrud = "<a onclick='rellEditV2(" . $encryp . ",vehicleAjax," . SERVERURL . ",idVehicle)' class='btn btn-primary btn-xs  mr-xs' data-toggle='modal' data-target='#modalesForm'><i class='fa-regular fa-pen-to-square'></i></a>";
-        $operacionescrud .= "<button type='submit' onclick='modalOnActivaDeleteDataTable(vehicleAjax," . $encryp . "," . $status . "," . SERVERURL . ")' class='btn btn-" . $btn . " btn-xs '> <i class='fa fa-" . $icon . "'></i></button>";
+        $operacionescrud = "<a onclick='rellEditV2(`".$encryp."`,`".'vehicleAjax'."`,`".SERVERURL."`,`idVehicle`)' class='btn btn-primary btn-xs  mr-xs' data-toggle='modal' data-target='#modalesForm'><i class='fa-regular fa-pen-to-square'></i></a>";
+        $operacionescrud .= "<button type='submit' onclick='modalOnActivaDeleteDataTable(`".'vehicleAjax'."`,`".$encryp."`,".$status.",`".SERVERURL."`)' class='btn btn-" . $btn . " btn-xs '> <i class='fa fa-" . $icon . "'></i></button>";
 
         $subdata[] = $operacionescrud;
         $data[] = $subdata;

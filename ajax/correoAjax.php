@@ -22,6 +22,10 @@ if (isset($_GET['btnActivaEliminar'])) {
     echo $inst->activaDeleteBrandController($id, $status);
 }
 
+if (isset($_GET['formupdate'])) {
+        echo $inst->formupdate();
+    }
+
 if (isset($_POST['update'])) {
     echo $inst->updateCorreoController();
 }

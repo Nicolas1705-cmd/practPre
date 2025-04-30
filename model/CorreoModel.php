@@ -17,13 +17,13 @@ class CorreoModel extends mainModel
             $sql->bindParam(":addressee", $data["addressee"]);
             $sql->bindParam(":description", $data["description"]);
             $sql->bindParam(":image", $data["image"]);
-            return $sql->execute(); // Retorna true o false
+            return $sql->execute(); 
         } catch (PDOException $e) {
-            // Manejo de errores PDO
+            
             error_log("Error PDO en saveCorreoModel: " . $e->getMessage());
             return false;
         } catch (Exception $e) {
-            // Manejo de otros errores
+           
             error_log("Error general en saveCorreoModel: " . $e->getMessage());
             return false;
         }
@@ -39,7 +39,7 @@ class CorreoModel extends mainModel
             $sql->bindParam(":addressee", $data["addressee"]);
             $sql->bindParam(":description", $data["description"]);
             $sql->bindParam(":image", $data["image"]);
-            return $sql->execute(); // Retorna true o false
+            return $sql->execute(); 
         } catch (PDOException $e) {
             error_log("Error PDO en updateCorreoModel: " . $e->getMessage());
             return false;
