@@ -1,25 +1,5 @@
 <style>
-  .bdprincipal {
- width: 100%;
-    padding: 0 7%;
-    display: table;
-    margin: 0;
-    max-width: none;
-    background-color: #373B44;
-    height: 100vh;
- }
- .content-body{
-  padding: 20px !important;
- }
- .grafico-contenedor {
-    width: 100%;
-    height: auto;
-    margin-left: 20px;
-  }
-  #miGrafico {
-    width: 150%;
-    height: 150%;
-  }
+  /* ... tus estilos ... */
 </style>
 <?php
   if ($peticionAjax) {
@@ -28,7 +8,9 @@
     require_once "./controller/HomeController.php";
   }
   $inst= new HomeController();
-  $datosGrafico = $inst->obtenerDatosGraficoHome(); // Llamamos a la nueva función
+  $datosGraficoDiario = $inst->obtenerDatosGraficoHome('day');
+  $datosGraficoSemanal = $inst->obtenerDatosGraficoHome('week');
+  $datosGraficoMensual = $inst->obtenerDatosGraficoHome('month');
 ?>
 
 <header class="page-header">
@@ -51,48 +33,82 @@
 
 </header>
 <div class="content-body">
+  <div>
+    <label for="periodo">Seleccionar período:</label>
+    <select id="periodo">
+      <option value="day" selected>Diario</option>
+      <option value="week">Semanal</option>
+      <option value="month">Mensual</option>
+    </select>
+  </div>
   <div style="margin-left: 0; margin-right:100px;">
     <canvas id="miGrafico"></canvas>
   </div>
 
   <script>
-    const labels = <?php echo json_encode($datosGrafico['labels']); ?>;
-    const data = {
-      labels: labels,
-      datasets: [{
-        label: 'Registros por Fecha',
-        data: <?php echo json_encode($datosGrafico['datasets']); ?>,
-        backgroundColor: 'rgba(255, 99, 122, 1)',
-        borderColor: 'rgba(255, 99, 122, 1)',
-        borderWidth: 1
-      }]
-    };
+    const datosDiarios = <?php echo json_encode($datosGraficoDiario); ?>;
+    const datosSemanales = <?php echo json_encode($datosGraficoSemanal); ?>;
+    const datosMensuales = <?php echo json_encode($datosGraficoMensual); ?>;
 
-    const config = {
-      type: 'bar',
-      data: data,
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Cantidad de Registros'
-            }
-          },
-          x: {
-            title: {
-              display: true,
-              text: 'Fecha de Registro'
+    const chartCanvas = document.getElementById('miGrafico').getContext('2d');
+    let miGrafico;
+
+    function actualizarGrafico(datos) {
+      if (miGrafico) {
+        miGrafico.destroy();
+      }
+
+      const data = {
+        labels: datos.labels,
+        datasets: [{
+          label: 'Registros por Período',
+          data: datos.datasets,
+          backgroundColor: 'rgba(255, 99, 132, 0.7)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1
+        }]
+      };
+
+      const config = {
+        type: 'bar',
+        data: data,
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Cantidad de Registros'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Período'
+              }
             }
           }
-        }
-      },
-    };
+        },
+      };
 
-    const miGrafico = new Chart(
-      document.getElementById('miGrafico'),
-      config
-    );
+      miGrafico = new Chart(chartCanvas, config);
+    }
+
+    document.getElementById('periodo').addEventListener('change', function() {
+      const periodoSeleccionado = this.value;
+      let nuevosDatos;
+
+      if (periodoSeleccionado === 'day') {
+        nuevosDatos = datosDiarios;
+      } else if (periodoSeleccionado === 'week') {
+        nuevosDatos = datosSemanales;
+      } else if (periodoSeleccionado === 'month') {
+        nuevosDatos = datosMensuales;
+      }
+
+      actualizarGrafico(nuevosDatos);
+    });
+
+    actualizarGrafico(datosDiarios);
   </script>
 </div>

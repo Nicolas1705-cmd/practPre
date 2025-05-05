@@ -9,48 +9,62 @@ if ($peticionAjax) {
 class HomeController extends mainModel
 {
 
-  public function obtenerDatosGraficoHome() {
-        $conexion = mainModel::conect();
-        $datos = [];
-        $labels = [];
-        $datasets = [];
+  public function obtenerDatosGraficoHome($periodo = 'day') {
+    $conexion = mainModel::conect();
+    $datos = [];
+    $labels = [];
+    $datasets = [];
+    $sql = "";
+    $formatoFechaSQL = "";
 
-        $sql = "SELECT name, DATE(dateRegister) AS fecha_registro FROM tsolicitud ORDER BY dateRegister";
-        $resultado = $conexion->query($sql);
+    switch ($periodo) {
+        case 'week':
+            $sql = "SELECT DATE_FORMAT(MIN(dateRegister), '%d-%m-%Y') AS inicio_semana, DATE_FORMAT(MAX(dateRegister), '%d-%m-%Y') AS fin_semana, YEARWEEK(dateRegister, 1) AS periodo, COUNT(*) AS cantidad FROM tsolicitud GROUP BY periodo ORDER BY periodo";
+            break;
+        case 'month':
+            $sql = "SELECT DATE_FORMAT(MIN(dateRegister), '%d de %M de %Y') AS inicio_mes, DATE_FORMAT(MAX(dateRegister), '%d de %M de %Y') AS fin_mes, DATE_FORMAT(dateRegister, '%Y-%m') AS periodo, COUNT(*) AS cantidad FROM tsolicitud GROUP BY periodo ORDER BY periodo";
+            break;
+        default: // 'day'
+            $sql = "SELECT DATE_FORMAT(dateRegister, '%d-%m-%Y') AS fecha_registro, DATE_FORMAT(dateRegister, '%W, %d de %M de %Y') AS periodo_formateado, COUNT(*) AS cantidad FROM tsolicitud GROUP BY fecha_registro ORDER BY dateRegister";
+            break;
+    }
 
-        if ($resultado) {
-            $registros = $resultado->fetchAll(PDO::FETCH_ASSOC);
+    $resultado = $conexion->query($sql);
 
-            $dataPorFecha = [];
-            foreach ($registros as $registro) {
-                $fecha = $registro['fecha_registro'];
-                if (!isset($dataPorFecha[$fecha])) {
-                    $dataPorFecha[$fecha] = 0;
-                }
-                $dataPorFecha[$fecha]++;
+    if ($resultado) {
+        $registros = $resultado->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($registros as $registro) {
+            if ($periodo === 'week') {
+                $labels[] = 'Semana del ' . $registro['inicio_semana'] . ' al ' . $registro['fin_semana'];
+                $datasets[] = $registro['cantidad'];
+            } else if ($periodo === 'month') {
+                $labels[] = 'Mes del ' . $registro['inicio_mes'] . ' al ' . $registro['fin_mes'];
+                $datasets[] = $registro['cantidad'];
+            } else { // 'day'
+                $labels[] = $registro['periodo_formateado'];
+                $datasets[] = $registro['cantidad'];
             }
-
-            $labels = array_keys($dataPorFecha);
-            $datasets = array_values($dataPorFecha);
-
-            $datos = [
-                'labels' => $labels,
-                'datasets' => $datasets
-            ];
-
-            $resultado = null; // Liberar el resultado
-        } else {
-            // Manejar el error de la consulta
-            error_log("Error al ejecutar la consulta: " . $conexion->error);
-            $datos = [
-                'labels' => [],
-                'datasets' => []
-            ];
         }
 
-        $conexion = null; // Cerrar la conexión
-        return $datos;
+        $datos = [
+            'labels' => $labels,
+            'datasets' => $datasets
+        ];
+
+        $resultado = null; 
+    } else {
+     
+        error_log("Error al ejecutar la consulta: " . $conexion->error);
+        $datos = [
+            'labels' => [],
+            'datasets' => []
+        ];
     }
+
+    $conexion = null; 
+    return $datos;
+}
 
     
    public function lccontrolcargoview(){
