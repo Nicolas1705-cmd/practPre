@@ -81,6 +81,13 @@
                     </a>
                   </li>
 
+                  <li <?php if ($rutaact[0]=="combustible" ) { ?> class="select" <?php } ?> >
+                    <a href="<?php echo SERVERURL ?>combustible">
+                      <i class="fa fa-home" aria-hidden="true"></i>
+                      <span>COMBUSTIBLE</span>
+                    </a>
+                  </li>
+
                   <li <?php if ($rutaact[0]=="correo" ) { ?> class="select" <?php } ?> >
                     <a href="<?php echo SERVERURL ?>correo">
                       <i class="fa fa-home" aria-hidden="true"></i>
