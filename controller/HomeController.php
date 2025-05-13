@@ -9,6 +9,55 @@ if ($peticionAjax) {
 class HomeController extends mainModel
 {
 
+   public function obtenerTotalMensualCombustible()
+    {
+        $cnn = mainModel::conect();
+        $mesActual = date('Y-m-01');
+        $sql = "SELECT SUM(monto) AS total_mensual FROM tcombustible WHERE dateRegister >= :mes_actual";
+        $query = $cnn->prepare($sql);
+        $query->bindParam(':mes_actual', $mesActual);
+        $query->execute();
+        $resultado = $query->fetch(PDO::FETCH_ASSOC);
+        return $resultado['total_mensual'] ?? 0;
+    }
+
+    public function obtenerVehiculoMasEficiente()
+    {
+        $cnn = mainModel::conect();
+        $sql = "SELECT
+                    tv.name AS nombre_vehiculo,
+                    AVG(tc.kilometraje / tc.cantidad) AS rendimiento_promedio
+                FROM tcombustible tc
+                INNER JOIN tvehiculos tv ON tc.idVehiculos = tv.idVehiculos
+                WHERE tc.cantidad > 0 AND tc.kilometraje > 0
+                GROUP BY tv.idVehiculos
+                ORDER BY rendimiento_promedio DESC
+                LIMIT 1";
+        $query = $cnn->prepare($sql);
+        $query->execute();
+        return $query->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function obtenerAlertasRendimientoAnomalo()
+    {
+        $cnn = mainModel::conect();
+        // Define un umbral para considerar un rendimiento anómalo (ejemplo: menos de 2 km/litro)
+        $umbral_rendimiento_anomalo = 2;
+
+        $sql = "SELECT
+                    tv.name AS nombre_vehiculo,
+                    tc.kilometraje / tc.cantidad AS rendimiento,
+                    tc.dateRegister
+                FROM tcombustible tc
+                INNER JOIN tvehiculos tv ON tc.idVehiculos = tv.idVehiculos
+                WHERE tc.cantidad > 0 AND tc.kilometraje > 0 AND (tc.kilometraje / tc.cantidad) < :umbral
+                ORDER BY tc.dateRegister DESC";
+        $query = $cnn->prepare($sql);
+        $query->bindParam(':umbral', $umbral_rendimiento_anomalo);
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
   public function obtenerDatosGraficoHome($periodo = 'day') {
     $conexion = mainModel::conect();
     $datos = [];
