@@ -29,18 +29,20 @@
   }
 
   .alert-anomalo {
-    background-color: #ffe0b2;
-    border: 1px solid #ffb300;
+    background-color: #f44336; /* rojo fuerte intenso */
+    border: 1px solid #d32f2f; /* borde rojo oscuro */
     padding: 15px;
     border-radius: 5px;
     margin-bottom: 10px;
-    color: #ff6f00;
-  }
+    color: #ffffff; /* texto blanco para máximo contraste */
+}
 
-  .alert-anomalo h4 {
+.alert-anomalo h4 {
     margin-top: 0;
     margin-bottom: 5px;
-  }
+}
+
+
 </style>
 <?php
 if ($peticionAjax) {
@@ -61,7 +63,6 @@ $alertasRendimientoAnomalo = $inst->obtenerAlertasRendimientoAnomalo();
 
 <header class="page-header">
   <h2>Dashboard</h2>
-
   <div class="right-wrapper pull-right">
     <ol class="breadcrumbs">
       <li>
@@ -71,21 +72,16 @@ $alertasRendimientoAnomalo = $inst->obtenerAlertasRendimientoAnomalo();
       </li>
       <li><span>Home</span></li>
     </ol>
-
     <a class="sidebar-right-toggle" data-open="sidebar-right"><i class="fa fa-chevron-left"></i></a>
   </div>
-
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
 </header>
 <div class="content-body">
-
   <div class="dashboard-container">
     <div class="dashboard-info-box">
       <h3>Total Gastado en Combustible (Mensual)</h3>
       <p><strong>S/ <?php echo number_format($totalMensualCombustible, 2); ?></strong></p>
     </div>
-
     <div class="dashboard-info-box">
       <h3>Vehículo Más Eficiente</h3>
       <?php if ($vehiculoMasEficiente): ?>
@@ -95,35 +91,38 @@ $alertasRendimientoAnomalo = $inst->obtenerAlertasRendimientoAnomalo();
         <p>No hay datos suficientes para calcular.</p>
       <?php endif; ?>
     </div>
-
-    <div class="dashboard-info-box">
-      <h3>Alertas de Rendimiento Anómalo</h3>
-      <?php if (!empty($alertasRendimientoAnomalo)): ?>
-        <?php foreach ($alertasRendimientoAnomalo as $alerta): ?>
+    <div class="alert-anomalo" id="alerta-principal" onclick="toggleAlertas()">
+      <h4>¡Rendimiento Bajo!</h4>
+      <p><strong>Vehículo:</strong> <?php echo $alertasRendimientoAnomalo[0]['nombre_vehiculo']; ?></p>
+      <p><strong>Rendimiento:</strong> <?php echo number_format($alertasRendimientoAnomalo[0]['rendimiento'], 2); ?> km/litro</p>
+      <p><strong>Fecha:</strong> <?php echo $alertasRendimientoAnomalo[0]['dateRegister']; ?></p>
+    </div>
+    <div id="alertas-adicionales" style="display: none;">
+      <?php foreach ($alertasRendimientoAnomalo as $index => $alerta): ?>
+        <?php if ($index > 0): ?>
           <div class="alert-anomalo">
             <h4>¡Rendimiento Bajo!</h4>
             <p><strong>Vehículo:</strong> <?php echo $alerta['nombre_vehiculo']; ?></p>
             <p><strong>Rendimiento:</strong> <?php echo number_format($alerta['rendimiento'], 2); ?> km/litro</p>
             <p><strong>Fecha:</strong> <?php echo $alerta['dateRegister']; ?></p>
           </div>
-        <?php endforeach; ?>
-      <?php else: ?>
-        <p>No se encontraron alertas de rendimiento anómalo.</p>
-      <?php endif; ?>
+        <?php endif; ?>
+      <?php endforeach; ?>
     </div>
   </div>
-
-  <div>
+  <div class="periodo-selector">
     <label for="periodo">Seleccionar período para el gráfico:</label>
-    <select id="periodo">
+    <select id="periodo" class="form-control">
       <option value="day" selected>Diario</option>
       <option value="week">Semanal</option>
       <option value="month">Mensual</option>
     </select>
   </div>
-  <div style="margin-left: 0; margin-right:100px;">
+  <div class="chart-container">
     <canvas id="miGrafico"></canvas>
   </div>
+</div>
+
 
   <script>
     const datosDiarios = <?php echo json_encode($datosGraficoDiario); ?>;
@@ -139,15 +138,16 @@ $alertasRendimientoAnomalo = $inst->obtenerAlertasRendimientoAnomalo();
       }
 
       const data = {
-        labels: datos.labels,
-        datasets: [{
-          label: 'Registros por Período',
-          data: datos.datasets,
-          backgroundColor: 'rgba(255, 99, 132, 0.7)',
-          borderColor: 'rgba(255, 99, 132, 1)',
-          borderWidth: 1
-        }]
-      };
+    labels: datos.labels,
+    datasets: [{
+        label: 'Registros por Período',
+        data: datos.datasets,
+        backgroundColor: 'rgba(255, 0, 0, 0.85)',
+        borderColor: 'rgba(255, 0, 0, 1)',  
+        borderWidth: 1
+    }]
+};
+
 
       const config = {
         type: 'bar',
@@ -190,5 +190,19 @@ $alertasRendimientoAnomalo = $inst->obtenerAlertasRendimientoAnomalo();
     });
 
     actualizarGrafico(datosDiarios);
+
+     function toggleAlertas() {
+        var alertasAdicionales = document.getElementById('alertas-adicionales');
+        if (alertasAdicionales.style.display === 'none') {
+            alertasAdicionales.style.display = 'block';
+        } else {
+            alertasAdicionales.style.display = 'none';
+        }
+    }
+
+    function toggleAlertas() {
+    const adicionales = document.getElementById('alertas-adicionales');
+    adicionales.style.display = (adicionales.style.display === 'none' || adicionales.style.display === '') ? 'block' : 'none';
+  }
   </script>
 </div>
