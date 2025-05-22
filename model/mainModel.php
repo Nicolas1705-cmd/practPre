@@ -748,649 +748,297 @@ public static function conectREPORT(){
 
 	
 		protected function mensajeRespuesta($data){
-			if($data['alert']=="save"){
-				$alert="
-				<script>
-				 new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Datos guardados correctamente.',
-					type: 'success'
-				});
+        $response_data = []; // Este será el array que contendrá la información para el JSON
 
-				     	resetForm();
-				</script>";
-			}
-	else if($data['alert']=="saveremitransp"){
-		$url=$data['report'];
-				$alert="
-				<script>
-				 new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Datos guardados correctamente.',
-					type: 'success'
-				});
-				resetForm();
-				  setTimeout(ventanaReport(`".$url."`), 4000);
+        // La propiedad 'alert' es siempre obligatoria para saber qué tipo de mensaje es
+        $response_data['alert'] = $data['alert'];
 
-				</script>
-				";
-			}
+        // Agrega otras propiedades al array dependiendo del tipo de alerta
+        if ($data['alert'] == "save") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Datos guardados correctamente.';
+            $response_data['type'] = 'success';
+            $response_data['actions'] = ['resetForm']; // Indicar acciones a ejecutar en JS
+            // Aquí puedes añadir la lógica de WhatsApp para guardar, como habíamos discutido
+            if (isset($data['send_whatsapp']) && $data['send_whatsapp'] === true) {
+                $response_data['send_whatsapp'] = true;
+                $response_data['whatsapp_number'] = $data['whatsapp_number'];
+            }
 
-	else if($data['alert']=="savenotifi"){
-				
-		$alert="	<script>
-				 new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Datos guardados correctamente.',
-					type: 'success'
-				});
-    	resetForm();
-    	insertarnot('".$data['email']."');
-				</script>	";
-			}
-else if($data['alert']=="savenotifipersonalizado"){
-				
-		$alert='	<script>
-				 new PNotify({
-					title: "Operacion Exitosa",
-					text: "Datos guardados correctamente.",
-					type: "success"
-				});
-    	resetForm();
-    	insertarnot("'.$data['email'].'");
+        } else if ($data['alert'] == "saveremitransp") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Datos guardados correctamente.';
+            $response_data['type'] = 'success';
+            $response_data['report_url'] = $data['report'];
+            $response_data['actions'] = ['resetForm', 'ventanaReport'];
 
+        } else if ($data['alert'] == "savenotifi") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Datos guardados correctamente.';
+            $response_data['type'] = 'success';
+            $response_data['email'] = $data['email'];
+            $response_data['actions'] = ['resetForm', 'insertarnot'];
 
-				</script>';
-			}
-else if($data['alert']=="savenotifipersonalizadocharguef2"){	
-		$url=$data['report'];
+        } else if ($data['alert'] == "savenotifipersonalizado") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Datos guardados correctamente.';
+            $response_data['type'] = 'success';
+            $response_data['email'] = $data['email'];
+            $response_data['actions'] = ['resetForm', 'insertarnot'];
 
-		$alert='	<script>
-	
-			 new PNotify({
-					title: "Operacion Exitosa",
-					text: "Datos guardados correctamente.",
-					type: "success"
-				});
-    	resetForm();
-    	insertarnot("'.$data['email'].'");
-											  setTimeout(ventanaReport("'.$url.'"), 4000);
+        } else if ($data['alert'] == "savenotifipersonalizadocharguef2") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Datos guardados correctamente.';
+            $response_data['type'] = 'success';
+            $response_data['email'] = $data['email'];
+            $response_data['report_url'] = $data['report'];
+            $response_data['actions'] = ['resetForm', 'insertarnot', 'ventanaReport', 'tabladata_reload'];
 
-				tabladata.ajax.reload(null, false);
-				</script>';
-			}
+        } else if ($data['alert'] == "savenotifipersonalizadochargue") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Datos guardados correctamente.';
+            $response_data['type'] = 'success';
+            $response_data['email'] = $data['email'];
+            $response_data['actions'] = ['resetForm', 'insertarnot', 'tabladata_reload'];
 
-else if($data['alert']=="savenotifipersonalizadochargue"){	
-		$alert='	<script>
-				 new PNotify({
-					title: "Operacion Exitosa",
-					text: "Datos guardados correctamente.",
-					type: "success"
-				});
-    	resetForm();
-    	insertarnot("'.$data['email'].'");
-				tabladata.ajax.reload(null, false);
-				</script>';
-			}
-else if($data['alert']=="savenotifipersonalizadodispacht"){
-				
-		$alert='	<script>
-				 new PNotify({
-					title: "Operacion Exitosa",
-					text: "Datos guardados correctamente.",
-					type: "success"
-				});
-    	resetForm();
-    	insertarnot("'.$data['email'].'");
-			
-	tabladata.ajax.reload(null, false);
+        } else if ($data['alert'] == "savenotifipersonalizadodispacht") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Datos guardados correctamente.';
+            $response_data['type'] = 'success';
+            $response_data['email'] = $data['email'];
+            $response_data['actions'] = ['resetForm', 'insertarnot', 'tabladata_reload'];
 
-				</script>';
-			}			
+        } else if ($data['alert'] == "savenotifipersonalizadof5") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Datos guardados correctamente.';
+            $response_data['type'] = 'success';
+            $response_data['email'] = $data['email'];
+            $response_data['report_url'] = $data['report'];
+            $response_data['actions'] = ['resetForm', 'insertarnot', 'tabladata_reload', 'ventanaReport'];
 
-else if($data['alert']=="savenotifipersonalizadof5"){
-						$url=$data['report'];
+        } else if ($data['alert'] == "savenotifipersonalizadof5Remesa") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Datos guardados correctamente.';
+            $response_data['type'] = 'success';
+            $response_data['email'] = $data['email'];
+            $response_data['report_url'] = $data['report'];
+            $response_data['redirect_url'] = SERVERURL . "remesa?nivel=2";
+            $response_data['actions'] = ['resetForm', 'insertarnot', 'tabladata_reload', 'ventanaReport', 'redirect'];
 
-		
-$alert="	<script>
-				 new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Datos guardados correctamente.',
-					type: 'success'
-				});
-    	resetForm();
-    	insertarnot('".$data['email']."');
-	tabladata.ajax.reload(null, false);
-    	    					  setTimeout(function(){
-    	    					  	ventanaReport(`".$url."`);
-    }  , 4200);
+        } else if ($data['alert'] == "savecontact") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Datos guardados correctamente.';
+            $response_data['type'] = 'success';
+            $response_data['opcion'] = $data['opcion']; // Contiene código JS a ejecutar
+            $response_data['actions'] = ['custom_opcion', 'resetmodalFt'];
 
-				</script>	";
+        } else if ($data['alert'] == "updatereport") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Datos guardados correctamente.';
+            $response_data['type'] = 'success';
+            $response_data['report_url'] = $data['report'];
+            $response_data['actions'] = ['resetForm', 'ventanaReport', 'tabladata_reload'];
 
-			}
+        } else if ($data['alert'] == "saveproduct") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Datos guardados correctamente.';
+            $response_data['type'] = 'success';
+            $response_data['actions'] = ['resetForm', 'resetForm2', 'resetFormAjax']; // Asumiendo .formAjax[0].reset() se convierte en resetFormAjax
 
-else if($data['alert']=="savenotifipersonalizadof5Remesa"){
-						$url=$data['report'];
+        } else if ($data['alert'] == "savemanifest") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Datos guardados correctamente.';
+            $response_data['type'] = 'success';
+            $response_data['actions'] = ['reload_window'];
 
-		
-$alert="	<script>
-				 new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Datos guardados correctamente.',
-					type: 'success'
-				});
-    	resetForm();
-    	insertarnot('".$data['email']."');
-	tabladata.ajax.reload(null, false);
-    	    					  setTimeout(function(){
-    	    					  	ventanaReport(`".$url."`);
-	 window.location.href = `".SERVERURL."remesa?nivel=2`;
-    }  , 4200);
+        } else if ($data['alert'] == "updatenotifi") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Los datos se actualizaron con exito.';
+            $response_data['type'] = 'success';
+            $response_data['email'] = $data['email'];
+            $response_data['actions'] = ['tabladata_reload', 'resetForm', 'insertarnot'];
 
-				</script>	";
+        } else if ($data['alert'] == "update") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Los datos se actualizaron con exito.';
+            $response_data['type'] = 'success';
+            $response_data['actions'] = ['tabladata_reload', 'resetForm'];
 
-			}
+        } else if ($data['alert'] == "updateremesareport") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Datos guardados correctamente.';
+            $response_data['type'] = 'success';
+            $response_data['report_url'] = $data['report'];
+            $response_data['actions'] = ['resetForm', 'ventanaReport', 'tabladata_reload'];
 
-	else if($data['alert']=="savecontact"){
-		$extra=$data['opcion'];		
-				$alert="
-				<script>
-				
-				 new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Datos guardados correctamente.',
-					type: 'success'
-				});
-				
-                ".$extra."
-resetmodalFt();
-				</script>
-				";
-			}
-else if($data['alert']=="updatereport"){
-		$url=$data['report'];
-				$alert="
-				<script>
-				 new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Datos guardados correctamente.',
-					type: 'success'
-				});
-				resetForm();
-				  setTimeout(ventanaReport(`".$url."`), 4000);
-	tabladata.ajax.reload(null, false);
+        } else if ($data['alert'] == "updatemf") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Los datos se actualizaron con exito.';
+            $response_data['type'] = 'success';
+            $response_data['actions'] = ['tabladata_reload', 'resetForm'];
 
-				</script>";
-			}
-			else if($data['alert']=="saveproduct"){
-				$alert="
-				<script>
-				 new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Datos guardados correctamente.',
-					type: 'success'
-				});
-				 $('.formAjax')[0].reset();
-				resetForm2();
-				</script>
-				";
-			}
-else if($data['alert']=="savemanifest"){
-				$alert="
-					<script>
-				 new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Datos guardados correctamente.',
-					type: 'success'
-				});
-	setTimeout(function(){
-   window.location.reload(1);
-}, 500);
-				</script>
-				";
-			}
+        } else if ($data['alert'] == "sendnotifi") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Los datos se actualizaron con exito.';
+            $response_data['type'] = 'success';
+            $response_data['email'] = $data['email'];
+            $response_data['actions'] = ['tabladata_reload', 'insertarnot', 'resetForm'];
 
-	else if($data['alert']=="updatenotifi"){
-				
+        } else if ($data['alert'] == "sendnotifiemesamulti") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Los datos se actualizaron con exito.';
+            $response_data['type'] = 'success';
+            $response_data['email'] = $data['email'];
+            $response_data['email2'] = $data['email2'];
+            $response_data['actions'] = ['tabladata_reload', 'insertarnot', 'insertarnot_email2', 'resetForm'];
 
-				$alert="
-				<script>
-				  new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Los datos se actualizaron con exito.',
-					type: 'success'
-				});
-	tabladata.ajax.reload(null, false);
-    	resetForm();
-    	insertarnot('".$data['email']."');
-				</script>
-				";
-			}
+        } else if ($data['alert'] == "sendnotifiMult") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Los datos se actualizaron con exito.';
+            $response_data['type'] = 'success';
+            $response_data['email'] = $data['email'];
+            $response_data['email2'] = $data['email2'];
+            $response_data['actions'] = ['tabladata_reload', 'insertarnot', 'insertarnot_email2', 'resetForm'];
 
-			
-			else if($data['alert']=="update"){
-				$alert="
-				<script>
-				  new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Los datos se actualizaron con exito.',
-					type: 'success'
-				});
-	tabladata.ajax.reload(null, false);
-    	resetForm();
-				</script>
-				";
-			}else if($data['alert']=="updateremesareport"){
-		$url=$data['report'];
-				$alert="
-				<script>
-				 new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Datos guardados correctamente.',
-					type: 'success'
-				});
-				resetForm();
-				  setTimeout(ventanaReport(`".$url."`), 4000);
-	tabladata.ajax.reload(null, false);
-				</script>";
-			}
-			else if($data['alert']=="updatemf"){
-				$alert="
-				<script>
-				  new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Los datos se actualizaron con exito.',
-					type: 'success'
-				});
-	tabladata.ajax.reload(null, false);
-			    	resetForm();
-				</script>";
-			}
-			else if($data['alert']=="sendnotifi"){
-				$alert="
-				<script>
-				  new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Los datos se actualizaron con exito.',
-					type: 'success'
-				});
-	tabladata.ajax.reload(null, false);
-    	insertarnot('".$data['email']."');
-	tabladata.ajax.reload(null, false);
-    	resetForm();
-      </script>";
-			}
+        } else if ($data['alert'] == "updateTfg") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Los datos se actualizaron con exito.';
+            $response_data['type'] = 'success';
+            $response_data['actions'] = ['reload_window_delay'];
 
-else if($data['alert']=="sendnotifiemesamulti"){
-				$alert="
-				<script>
-				  new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Los datos se actualizaron con exito.',
-					type: 'success'
-				});
-	tabladata.ajax.reload(null, false);
-    	insertarnot('".$data['email']."');
-    	insertarnot('".$data['email2']."');
+        } else if ($data['alert'] == "saveseguiModulo") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Los datos se actualizaron con exito.';
+            $response_data['type'] = 'success';
+            $response_data['actions'] = ['resetmSeguimientoTrack'];
 
-	tabladata.ajax.reload(null, false);
-    	resetForm();
-      </script>";
-			}
-			 else if($data['alert']=="sendnotifiMult"){
-				$alert="
-				<script>
-				  new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Los datos se actualizaron con exito.',
-					type: 'success'
-				});
-	tabladata.ajax.reload(null, false);
-    	insertarnot('".$data['email']."');
-    	    	insertarnot('".$data['email2']."');
-    	resetForm();
-      </script>";
-			} 
-				else if($data['alert']=="updateTfg"){
-				$alert="
-				<script>
-				  new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Los datos se actualizaron con exito.',
-					type: 'success'
-				});
-		setTimeout(function(){
-   window.location.reload(1);
-}, 5000);
-				</script>
-				";
-			}
-else if($data['alert']=="saveseguiModulo"){
-				$alert="
-				<script>
-				  new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Los datos se actualizaron con exito.',
-					type: 'success'
-				});
-    	resetmSeguimientoTrack();
-				</script>";
-			}
+        } else if ($data['alert'] == "saveseguiModulo2") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Los datos se actualizaron con exito.';
+            $response_data['type'] = 'success';
+            $response_data['redirect_url'] = SERVERURL . "servicetracking?nivel=2";
+            $response_data['actions'] = ['resetmSeguimientoTrack', 'redirect'];
 
-else if($data['alert']=="saveseguiModulo2"){
-	$alert="			<script>
-				  new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Los datos se actualizaron con exito.',
-					type: 'success'
-				});
-    	resetmSeguimientoTrack();
-			
-setTimeout(function(){	    					  
-	 window.location.href =`".SERVERURL."servicetracking?nivel=2`;
-    }  , 4200);
-				</script>
-				";
-			}
-else if($data['alert']=="saveindicador"){
-	$alert="<script>
-				  new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Los datos se registraron con exito.',
-					type: 'success'
-				});
-			
-setTimeout(function(){	    					  
-	 window.location.href =`".SERVERURL."indicadores?nivel=2`;
-    }  , 200);
-				</script>
-				";
-			}
+        } else if ($data['alert'] == "saveindicador") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Los datos se registraron con exito.';
+            $response_data['type'] = 'success';
+            $response_data['redirect_url'] = SERVERURL . "indicadores?nivel=2";
+            $response_data['actions'] = ['redirect'];
 
-else if($data['alert']=="saveseguiModulo"){
-				$alert="
-				<script>
-				  new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Los datos se actualizaron con exito.',
-					type: 'success'
-				});
-    	resetmSeguimientoTrack();
-				</script>";
-			}
+        } else if ($data['alert'] == "saveControlcargo") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Los datos se actualizaron con exito.';
+            $response_data['type'] = 'success';
+            $response_data['actions'] = ['resetControlcargo'];
 
-else if($data['alert']=="saveseguiModulo2"){
-	$alert="			<script>
-				  new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Los datos se actualizaron con exito.',
-					type: 'success'
-				});
-    	resetmSeguimientoTrack();
-			
-setTimeout(function(){	    					  
-	 window.location.href =`".SERVERURL."servicetracking?nivel=2`;
-    }  , 4200);
-				</script>
-				";
-			}
+        } else if ($data['alert'] == "saveLiquidacionCargo") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Los datos se guadaron con exito.';
+            $response_data['type'] = 'success';
+            $response_data['actions'] = ['listarDatableGroupLiquicargacontrol'];
 
-else if($data['alert']=="saveControlcargo"){
-				$alert="
-				<script>
-				  new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Los datos se actualizaron con exito.',
-					type: 'success'
-				});
-    	resetControlcargo();
-				</script>";
-			}
+        } else if ($data['alert'] == "saveControlcargo2") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Los datos se actualizaron con exito.';
+            $response_data['type'] = 'success';
+            $response_data['redirect_url'] = SERVERURL . "charguecontrol?nivel=2";
+            $response_data['actions'] = ['resetControlcargo', 'redirect'];
 
-else if($data['alert']=="saveLiquidacionCargo"){
-				$alert='
-				<script>
-				  new PNotify({
-					title: "Operacion Exitosa",
-					text: "Los datos se guadaron con exito.",
-					type: "success"
-				});
-				
-listarDatableGroupLiquicargacontrol();
-				</script>';
-			}
+        } else if ($data['alert'] == "saveseguiModulo3") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Los datos se guardaon con exito.';
+            $response_data['type'] = 'success';
+            $response_data['actions'] = ['resetmSeguimientoReg', 'tabladata2_reload'];
 
+        } else if ($data['alert'] == "updateseguiModulo3") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Los datos se actualizaron con exito.';
+            $response_data['type'] = 'success';
+            $response_data['actions'] = ['resetmSeguimientoRegupdate', 'tabladata_reload'];
 
-else if($data['alert']=="saveControlcargo2"){
-	$alert="			<script>
-				  new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Los datos se actualizaron con exito.',
-					type: 'success'
-				});
-    	resetControlcargo();
-			
-setTimeout(function(){	    					  
-	 window.location.href =`".SERVERURL."charguecontrol?nivel=2`;
-    }  , 4200);
-				</script>
-				";
-			}
-else if($data['alert']=="saveseguiModulo3"){
-				$alert="
-				<script>
-				  new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Los datos se guardaon con exito.',
-					type: 'success'
-				});
-    	resetmSeguimientoReg();
-	tabladata2.ajax.reload(null, false);
-				</script>";
-			}
+        } else if ($data['alert'] == "updateAereo") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Los datos se actualizaron con exito.';
+            $response_data['type'] = 'success';
+            $response_data['actions'] = ['tabladata2_reload', 'resetForm'];
 
+        } else if ($data['alert'] == "updatepersonalizado") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = $data['campo']; // El mensaje viene en 'campo'
+            $response_data['type'] = 'success';
+            if (isset($data['operacion']) && $data['operacion'] == "Password") {
+                $response_data['actions'] = ['resetForm'];
+            }
 
-else if($data['alert']=="updateseguiModulo3"){
-				$alert="
-				<script>
-				  new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Los datos se actualizaron con exito.',
-					type: 'success'
-				});
-    	resetmSeguimientoRegupdate();
-	tabladata.ajax.reload(null, false);
+        } else if ($data['alert'] == "delete") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Los datos se eliminaron de manera exitosa';
+            $response_data['type'] = 'success';
 
-				</script>
-				";
-			}
+        } else if ($data['alert'] == "duplicidad") {
+            $response_data['title'] = '¡ Algo Salio Mal !';
+            $response_data['text'] = 'El ' . $data['campo'] . ' ya existe en el sistema, por favor registre con otro dato';
+            $response_data['type'] = 'warning'; // Cambiado a warning, success es para operaciones exitosas
 
+        } else if ($data['alert'] == "duplicidadpers") {
+            $response_data['title'] = '¡ Algo Salio Mal !';
+            $response_data['text'] = 'El ' . $data['campo'] . ' ya existe en el sistema, por favor registre con otro email ';
+            $response_data['type'] = 'error'; // Error o warning, dependiendo de la severidad
+            $response_data['actions'] = ['enableGuardarButton']; // Acción para re-habilitar el botón
+            $response_data['button_text'] = 'Guardar'; // Texto para el botón
 
+        } else if ($data['alert'] == "error") {
+            $response_data['title'] = 'Algo Salio Mal';
+            $response_data['text'] = 'Ocurrio un Error en el sistema , vuelva a intentarlo.';
+            $response_data['type'] = 'error';
 
-				else if($data['alert']=="updateAereo"){
-				$alert="
-				<script>
-				  new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Los datos se actualizaron con exito.',
-					type: 'success'
-				});
-	tabladata2.ajax.reload(null, false);
-    	resetForm();
-				</script>
-				";
-			}
+        } else if ($data['alert'] == "errorpersonalizadofull") {
+            $response_data['title'] = 'Algo Salio Mal';
+            $response_data['text'] = $data['message'];
+            $response_data['type'] = 'error';
 
+        } else if ($data['alert'] == "errorpersonalizado") {
+            $response_data['title'] = 'POR FAVOR MODIFIQUE LOS CAMPOS PARA REALIZAR LA OPERACION';
+            $response_data['text'] = 'USTED NO HA MODIFICADO NADA';
+            $response_data['type'] = 'error';
 
-			else if($data['alert']=="updatepersonalizado"){
-			      $html='';
-              if ($data['operacion']=="Password") {
-              	$html='resetForm();';
-              	
-              }
+        } else if ($data['alert'] == "error4") {
+            $response_data['title'] = 'Algo Salio Mal';
+            $response_data['text'] = 'Ocurrio un Error en el sistema , vuelva a intentarlo.';
+            $response_data['type'] = 'error';
+            $response_data['actions'] = ['enableGuardarPassButton']; // Acción para re-habilitar botón
+            $response_data['button_text'] = 'Guardar'; // Texto para el botón
 
-				$alert="
-			<script>
-				  new PNotify({
-					title: 'Operacion Exitosa',
-					text: ' ".$data['campo']."',
-					type: 'success'
-				});
-                 ".$html."
-				</script>
-				";
-			}
-			else if($data['alert']=="delete"){
+        } else if ($data['alert'] == "contraseñaError") {
+            $response_data['title'] = 'Algo Salio Mal';
+            $response_data['text'] = 'Contraseña Actual Invalida , vuelva a intentarlo.';
+            $response_data['type'] = 'error';
 
-					$alert="
-				<script>
-					  new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Los datos se eliminaron de manera exitosa',
-					type: 'success'
-				});
-				
-				</script>
-				";
+        } else if ($data['alert'] == "activate") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'El elemento se ha activado correctamente en el Sistema';
+            $response_data['type'] = 'success';
 
-			}else if($data['alert']=="duplicidad"){
-						$alert="
-				<script>
-					  new PNotify({
-					title: '¡ Algo Salio Mal !',
-					text: 'El  ".$data['campo']."  ya existe en el sistema, por favor registre con otro dato',
-					type: 'success'
-				});
-				
-				</script>
-				";
+        } else if ($data['alert'] == "saveFoto") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Datos guardados correctamente.';
+            $response_data['type'] = 'success';
+            $response_data['image_src'] = SERVERURL . 'view/assets/images/nuevo.png';
+            $response_data['actions'] = ['resetForm', 'resetFormAjax', 'updateImageSrc']; // Acciones para JS
 
-				
-			}else if($data['alert']=="duplicidadpers"){
-				$alert="
-				<script>
- new PNotify({
-					title: '¡ Algo Salio Mal !',
-					text: 'El  ".$data['campo']."  ya existe en el sistema, por favor registre con otro email ',
-					type: 'error'
-				});
+        } else if ($data['alert'] == "updateFoto") {
+            $response_data['title'] = 'Operacion Exitosa';
+            $response_data['text'] = 'Los datos se actualizaron con exito.';
+            $response_data['type'] = 'success';
+            $response_data['actions'] = ['resetForm', 'tabladata_reload'];
+        }
 
+        // Finalmente, devuelve el array como JSON
+        header('Content-Type: application/json'); // Asegura que el navegador sepa que es JSON
+        return json_encode($response_data);
+    }
 
-				   $('#idGuardar').attr('disabled',false);
-          $('#idGuardar').text('Guardar');
-				</script>
-				";
-			}
-
-			else if($data['alert']=="error"){
-				$alert="
-				<script>
-				new PNotify({
-			title: 'Algo Salio Mal',
-			text: 'Ocurrio un Error en el sistema , vuelva a intentarlo.',
-			type: 'error'
-		});
-
-				</script>
-				";
-			}
-else if($data['alert']=="errorpersonalizadofull"){
-				$alert="
-				<script>
-				 
-		new PNotify({
-			title: 'Algo Salio Mal',
-			text:  '".$data['message']."',
-			type: 'error'
-		});
-
-
-				</script>
-				";
-			}
-
-else if($data['alert']=="errorpersonalizado"){
-				$alert="
-				<script>
-				 
-		new PNotify({
-			title: 'POR FAVOR MODIFIQUE LOS CAMPOS PARA REALIZAR LA OPERACION',
-			text:  'USTED NO A MODIFICADO NADA',
-			type: 'error'
-		});
-
-
-				</script>
-				";
-			}
-			else if($data['alert']=="error4"){
-				$alert="
-				<script>
-					new PNotify({
-			title: 'Algo Salio Mal',
-			text: 'Ocurrio un Error en el sistema , vuelva a intentarlo.',
-			type: 'error'
-		});
-
-				 
-   $('#idGuardarPass').attr('disabled',false);
-                                  $('#idGuardarPass').text('Guardar');
-				</script>
-				";
-			}
-			else if($data['alert']=="contraseñaError"){
-				$alert="
-					<script>
-				new PNotify({
-			title: 'Algo Salio Mal',
-			text: 'Contraseña Actual Invalidad , vuelva a intentarlo.',
-			type: 'error'
-		});
-
-				</script>
-				";
-			}
-			else if($data['alert']=="activate"){
-				$alert="
-				<script>
-					  new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'El elemento se a activado correctamente en el Sistema',
-					type: 'success'
-				});
-				
-				</script>
-				";
-			}else if($data['alert']=="saveFoto"){
-				$alert="
-				<script>
-						 new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Datos guardados correctamente.',
-					type: 'success'
-				});
-				 $('.formAjax')[0].reset();
-				 $('#img')[0].src ='".SERVERURL."view/assets/images/nuevo.png';
-				</script>
-				";
-			}else if($data['alert']=="updateFoto"){
-				$alert="
-				<script>
-				  new PNotify({
-					title: 'Operacion Exitosa',
-					text: 'Los datos se actualizaron con exito.',
-					type: 'success'
-				});
-               	resetForm();
-				tabladata.ajax.reload(null, false);
-				</script>
-				";
-			}
-			return $alert;
-
-		}
-
-	///registro actividades
 protected function saveRegistroactivity($data){
 
     $sql= mainModel::conect()->prepare("INSERT INTO tregistroactivity( idPersonal , actividad) VALUES (:idPersonal , :actividad)");

@@ -68,6 +68,7 @@ $typeElemento = "data-type='lista'";
                                 <th>Marca</th>
                                 <th>Modelo</th>
                                 <th>Fecha de registro</th>
+                                <th>num telefono</th>
                                 <th class="hidden-phone">Acción</th>
                             </tr>
                         </thead>

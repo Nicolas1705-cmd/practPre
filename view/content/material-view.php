@@ -65,8 +65,9 @@ $ajaxGlobal="materialAjax";
                       <th>#</th>
                       <th>Material</th>
                       <th>Stock</th>
+                      <th>n serie</th>
+                      <th>n telefono</th>
                       <th>fecha de registro</th>
-
                       <th class="hidden-phone">Accion</th>
                     </tr>
                   </thead>
